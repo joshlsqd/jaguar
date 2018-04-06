@@ -1,37 +1,61 @@
-import { makeExecutableSchema, addMockFunctionsToSchema } from 'graphql-tools';
+import { makeExecutableSchema} from 'graphql-tools';
 import resolvers from './resolvers';
-import mocks from './mocks';
 
+//import for schema from type files
+import {UserType, UserMutation, UserQuery} from "./types/user";
+import {TaskMutation, TaskQuery, TaskType} from "./types/task";
+import {TimeMutation, TimeQuery, TimeType} from "./types/time";
+import {PlannedTimeMutation, PlannedTimeQuery, PlannedTimeType} from "./types/plannedtime";
+import {OrganizationMutation, OrganizationQuery, OrganizationType} from "./types/organization";
+import {UserTypeOrgMutation, UserTypeOrgQuery, UserTypeOrgType} from "./types/usertypeorg";
+import {GroupMutation, GroupQuery, GroupType} from "./types/group";
+import {PriorityMutation, PriorityQuery, PriorityType} from "./types/priority";
+import {MilestoneMutation, MilestoneQuery, MilestoneType} from "./types/milestone";
+import {ProjectMutation, ProjectQuery, ProjectType} from "./types/project";
+import {RequirementMutation, RequirementQuery, RequirementType} from "./types/requirement";
+
+//schema for graphql
 const typeDefs = `
+    ${UserType}
+    ${TaskType}
+    ${TimeType}
+    ${PlannedTimeType}
+    ${OrganizationType}
+    ${UserTypeOrgType}
+    ${GroupType}
+    ${PriorityType}
+    ${MilestoneType}
+    ${ProjectType}
+    ${RequirementType}
+    
     type Query {
-        allUsers: [User]
+        ${UserQuery}
+        ${TaskQuery}
+        ${TimeQuery}
+        ${PlannedTimeQuery}
+        ${OrganizationQuery}
+        ${UserTypeOrgQuery}
+        ${GroupQuery}
+        ${PriorityQuery}
+        ${MilestoneQuery}
+        ${ProjectQuery}
+        ${RequirementQuery}
     }
     type Mutation {
-        createUser(
-            username: String
-            email: String
-            password: String
-            profileimageurl: String
-      ) : User
-    }
-    type Task {
-        _id: String
-        tasktitle: String
-        taskdescription: String
-    }
-    type Query {
-        allTasks: [Task]
-    }
-    type Mutation {
-        createTask(
-            tasktitle: String,
-            taskdescription: String
-        ) : Task
+        ${TaskMutation}
+        ${UserMutation}
+        ${TimeMutation}
+        ${PlannedTimeMutation}
+        ${OrganizationMutation}
+        ${UserTypeOrgMutation}
+        ${GroupMutation}
+        ${PriorityMutation}
+        ${MilestoneMutation}
+        ${ProjectMutation}
+        ${RequirementMutation}
     }
 `;
 
 const schema = makeExecutableSchema({ typeDefs, resolvers });
-
-addMockFunctionsToSchema({ schema, mocks });
 
 export default schema;

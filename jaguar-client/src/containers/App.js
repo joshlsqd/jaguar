@@ -1,30 +1,21 @@
-import React, { Component } from 'react';
-import logo from '../logo.svg';
-import './App.css';
-import TaskList from '../components/TaskList';
+import React, {Component} from 'react';
 import { ApolloProvider} from "react-apollo";
 import ApolloClient from 'apollo-boost';
+// import {BrowserRouter as Router} from 'react-router-dom';
+import UserList from '../components/UserList';
 
 const client = new ApolloClient({
     uri: "http://localhost:3001/graphql"
 });
 
 class App extends Component {
-  render() {
-    return (
-      <ApolloProvider client={client}>
-      <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <h1 className="App-title">Welcome to React</h1>
-        </header>
-        <div>
-            <TaskList/>
-        </div>
-      </div>
-      </ApolloProvider>
-    );
-  }
+    render(){
+        return(
+            <ApolloProvider client={client}>
+                <UserList/>
+            </ApolloProvider>
+        )
+    }
 }
 
 export default App;

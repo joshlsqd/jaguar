@@ -6,7 +6,7 @@ const milestoneSchema = new mongoose.Schema(
     {
         milestonetitle: {
             type: String,
-            required: true
+            required: true,
             maxLength: 50,
             minLength: 3
         },
@@ -20,16 +20,16 @@ const milestoneSchema = new mongoose.Schema(
         duedate: {
             type: Date
         },
-        milestonecomments: [{
-            commentuser: {
-                type: mongoose.Schema.Types.ObjectId,
-                ref: "User"
-            },
-            milestonecomment: {
-                type: String
-            }
-        }],
-        owners: [{
+        // milestonecomments: [{
+        //     commentuser: {
+        //         type: mongoose.Schema.Types.ObjectId,
+        //         ref: "User"
+        //     },
+        //     milestonecomment: {
+        //         type: String
+        //     }
+        // }],
+        users: [{
             type: mongoose.Schema.Types.ObjectId,
             ref: "User"
         }],

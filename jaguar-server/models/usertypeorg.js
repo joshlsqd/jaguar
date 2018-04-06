@@ -10,7 +10,7 @@ const userTypeSchema = new mongoose.Schema(
             type: mongoose.Schema.Types.ObjectId,
             ref: "Organization"
         },
-        user: [{
+        users: [{
             type: mongoose.Schema.Types.ObjectId,
             ref: "User"
         }]

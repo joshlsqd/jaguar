@@ -7,10 +7,18 @@ const prioritySchema = new mongoose.Schema(
             type: String,
             required: true
         },
-        task: {
+        task: [{
             type: mongoose.Schema.Types.ObjectId,
             ref: "Task"
-        }
+        }],
+        group: [{
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Group"
+        }],
+        project: [{
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Project"
+        }]
     },
     {
         timestamps:true

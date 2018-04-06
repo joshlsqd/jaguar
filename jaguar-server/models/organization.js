@@ -1,5 +1,4 @@
 const mongoose = require("mongoose");
-const User = require("./user");
 
 const organizationSchema = new mongoose.Schema(
     {
@@ -22,34 +21,38 @@ const organizationSchema = new mongoose.Schema(
                 type: String
             }
         }],
-        contacts: [{
+        users: [{
             type: mongoose.Schema.Types.ObjectId,
             ref: "User"
         }],
-        task: [{
+        usertype: [{
             type: mongoose.Schema.Types.ObjectId,
-            ref: "Task"
+            ref: "User"
         }],
-        group: [{
-            type: mongoose.Schema.Types.ObjectId,
-            ref: "Group"
-        }],
-        milestone: [{
-            type: mongoose.Schema.Types.ObjectId,
-            ref: "Milestone"
-        }],
-        requirements: [{
-            type: mongoose.Schema.Types.ObjectId,
-            ref: "Requirements"
-        }],
+        // task: [{
+        //     type: mongoose.Schema.Types.ObjectId,
+        //     ref: "Task"
+        // }],
+        // group: [{
+        //     type: mongoose.Schema.Types.ObjectId,
+        //     ref: "Group"
+        // }],
+        // milestone: [{
+        //     type: mongoose.Schema.Types.ObjectId,
+        //     ref: "Milestone"
+        // }],
+        // requirements: [{
+        //     type: mongoose.Schema.Types.ObjectId,
+        //     ref: "Requirements"
+        // }],
         project: [{
             type: mongoose.Schema.Types.ObjectId,
             ref: "Project"
         }],
-        client: [{
-            type: mongoose.Schema.Types.ObjectId,
-            ref: "Client"
-        }]
+        // client: [{
+        //     type: mongoose.Schema.Types.ObjectId,
+        //     ref: "Client"
+        // }]
     },
     {
         timestamps:true

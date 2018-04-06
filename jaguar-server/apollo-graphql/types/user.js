@@ -1,81 +1,84 @@
-const lodash = require('lodash');
-import { GraphQLObjectType, GraphQLString, GraphQLInt, GraphQLSchema } from 'graphql'
+import Time from '../../models/time';
+import Task from '../../models/task';
+import PlannedTime from '../../models/plannedtime';
+import UserTypeOrg from '../../models/usertypeorg';
+import Organization from '../../models/organization';
 
-const users = [
-    {_id: '11', username: 'josh', email: 'jcook@lynxsolutions.com', password: 'password123', age: 37},
-    {_id: '21', username: 'jen', email: 'jholley@lynxsolutions.com', password: 'password123', age: 35},
-    {_id: '31', username: 'celeste', email: 'clarson@lynxsolutions.com', password: 'password123', age: 30}
-];
-
-const UserType = new GraphQLObjectType({
-    name: 'User',
-    fields: {
-        _id: {type: GraphQLString},
-        username: {type: GraphQLString},
-        email: {type: GraphQLString},
-        password: {type: GraphQLString},
-        profileimageurl: {type: GraphQLString},
-        age: {type: GraphQLInt}
+const UserType = `
+        type User {
+        _id: String 
+        email: String
+        username: String
+        password: String
+        profileImageUrl: String
+        tasks: [Task]
+        time: [Time]
+        plannedtime: [PlannedTime]
+        usertypeorg: [UserTypeOrg]
+        organization: [Organization]
     }
-});
+`;
 
-const RootQuery = GraphQLObjectType({
-    name: 'RootQueryType',
-    fields: {
-        user: {
-            type: UserType,
-            args: {_id: {type: GraphQLString}}
-            resolve(parent, args) {
-                return lodash.find(users, {_id: args._id});
-            }
-        }
-    }
-});
-
-const usernew GraphQLSchema({
-   query: RootQuery
-});
-
-
-type Query {
+const UserQuery =`
   allUsers: [User]
-}
+  user(_id: String): User 
+`;
 
-type Mutation {
+const UserMutation = `
     createUser(
         username: String
         email: String
         password: String
-        profileimageurl: String
-  ) : User
-}
+        profileImageUrl: String
+    ) : User
+    updateUser(
+        usertypeorg: String
+        organization: String
+    ) : User
+`;
 
+const UserQueryResolver = {
+    allUsers: async (parent, args, {User}) => {
+        const users = await User.find({});
+        return users.map(user => {
+            user._id = user._id.toString();
+            return user
+        })
+    },
+    user: async (parent, args, {User}) => {
+        return await User.findById(args._id.toString())
+    },
+};
 
-// const userResolvers = {
-//     Query: {
-//         allUsers: async (parent, args, { User }) => {
-//             const users = await User.find({});
-//             return users.map(user => {
-//                 user._id = user._id.toString();
-//                 return user
-//             })
-//         }
-//     },
-//     Mutation: {
-//         createUser: async (parent, args, { User }) => {
-//             const user = await new User(args).save();
-//             user._id = user._id.toString();
-//             return user
-//         }
-//     }
-// };
-//
-// export const userSchema = makeExecutableSchema({
-//     typeDefs: userTypeDef,
-//     resolvers: userResolvers,
-// });
+const UserNested =  {
+    tasks: async ({_id}) => {
+        return (await Task.find({taskcurrentowner: _id}))
+    },
+    time: async ({_id}) => {
+        return (await Time.find({user: _id}))
+    },
+    plannedtime: async ({_id}) => {
+        return (await PlannedTime.find({user: _id}))
+    },
+    usertypeorg: async ({_id}) => {
+        return (await UserTypeOrg.find({user: _id}))
+    },
+    organization: async ({_id}) => {
+        return (await Organization.find({user: _id}))
+    }
+};
 
+const UserMutationResolver = {
+    createUser: async (parent, args, { User }) => {
+        let user = await new User(args).save();
+        user._id = user._id.toString();
+        return user
+    },
+    updateUser: async (parent, args, { User }) => {
+        let user = await User.findByIdAndUpdate(args._id.toString(),);
+        user._id = user._id.toString();
+        return user
+    }
+};
 
-// time: [Time]
-// plannedtime: [PlannedTime]
-// organization: [Organization]
+export {UserType, UserMutation, UserQuery, UserMutationResolver, UserQueryResolver, UserNested};

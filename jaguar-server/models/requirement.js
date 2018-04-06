@@ -17,21 +17,22 @@ const requirementSchema = new mongoose.Schema(
         },
         isApproved: {
             type: Boolean,
-            required: true
+            required: true,
+            default: false
         },
-        requirementusers: [{
+        users: [{
             type: mongoose.Schema.Types.ObjectId,
             ref: "User"
         }],
-        requirementcomments: [{
-            commentuser: {
-                type: mongoose.Schema.Types.ObjectId,
-                ref: "User"
-            },
-            commentuser: {
-                type: String
-            }
-        }],
+        // requirementcomments: [{
+        //     commentuser: {
+        //         type: mongoose.Schema.Types.ObjectId,
+        //         ref: "User"
+        //     },
+        //     commentuser: {
+        //         type: String
+        //     }
+        // }],
         requirementplannedtime: [{
             type: mongoose.Schema.Types.ObjectId,
             ref: "PlannedTime"

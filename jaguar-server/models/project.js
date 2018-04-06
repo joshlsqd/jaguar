@@ -19,16 +19,16 @@ const projectSchema = new mongoose.Schema(
         duedate: {
             type: Date
         },
-        projectcomments: [{
-            commentuser: {
-                type: mongoose.Schema.Types.ObjectId,
-                ref: "User"
-            },
-            projectcomment: {
-                type: String
-            }
-        }],
-        owners: [{
+        // projectcomments: [{
+        //     commentuser: {
+        //         type: mongoose.Schema.Types.ObjectId,
+        //         ref: "User"
+        //     },
+        //     projectcomment: {
+        //         type: String
+        //     }
+        // }],
+        users: [{
             type: mongoose.Schema.Types.ObjectId,
             ref: "User"
         }],
@@ -44,9 +44,17 @@ const projectSchema = new mongoose.Schema(
             type: mongoose.Schema.Types.ObjectId,
             ref: "Milestone"
         }],
-        requirements: [{
+        requirement: [{
             type: mongoose.Schema.Types.ObjectId,
             ref: "Requirements"
+        }],
+        projecttime: [{
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Time"
+        }],
+        projectplannedtime: [{
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "PlannedTime"
         }]
     },
     {

@@ -8,13 +8,19 @@
     "bcrypt": "^1.0.3",
     "body-parser": "^1.18.2",
     "casual": "^1.5.17",
+    "connect-mongo": "^2.0.1",
+    "cors": "^2.8.4",
+    "dotenv": "^5.0.1",
     "express": "^4.16.2",
+    "express-session": "^1.15.6",
     "graphql": "^0.13.2",
     "graphql-tools": "^2.13.0",
     "lodash": "^4.17.4",
     "mongodb": "^3.0.5",
     "mongoose": "^5.0.12",
-    "node-fetch": "^1.7.3"
+    "node-fetch": "^1.7.3",
+    "passport": "^0.4.0",
+    "passport-local": "^1.0.0"
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",
@@ -27,7 +33,7 @@
     ]
   },
   "scripts": {
-    "start": "nodemon ./jaguar-server/server.js --exec babel-node"
+    "start": "nodemon ./server.js --exec babel-node"
   },
   "author": "Jaguar"
 }
