@@ -5,11 +5,12 @@ class Navbar extends Component {
     render() {
         return (
             <nav>
-                <div className="nav-wrapper">
-                    <Link to='/'><a className="brand-logo">Logo</a></Link>
+                <div className="nav-wrapper indigo accent-2">
+                    <Link to='/' className="brand-logo">Logo</Link>
                     <ul id="nav-mobile" className="right hide-on-med-and-down">
-                        <li><Link to='/signup'><a href="">Sign Up</a></Link></li>
-                        <li><Link to='/signin'><a href="">Sign In</a></Link></li>
+                        <li><Link to='/signup'>Sign Up</Link></li>
+                        <li><Link to='/signin'>Sign In</Link></li>
+                        <li><Link to='/logout'>Log Out</Link></li>
                     </ul>
                 </div>
             </nav>

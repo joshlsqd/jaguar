@@ -3,8 +3,8 @@ import gql from "graphql-tag";
 import { Mutation } from "react-apollo";
 
 const ADD_USER = gql`
-mutation CreateUser($username: String, $password: String, $email: String, $profileImageUrl: String) {
-  createUser (username: $username, password: $password, email: $email, profileImageUrl: $profileImageUrl) {
+mutation signup($username: String!, $password: String!, $email: String!, $profileImageUrl: String) {
+  signup(username: $username, password: $password, email: $email, profileImageUrl: $profileImageUrl) {
     _id
     username
     profileImageUrl
@@ -27,12 +27,13 @@ class SignupForm extends Component {
     render() {
         return (
             <Mutation mutation={ADD_USER}>
-                {(createUser, {data}) => (
-                    <div>
+                {(signup, {data}) => (
+                    <div className='container'>
                         <form
                             onSubmit={e => {
                                 e.preventDefault();
-                                createUser({
+                                console.log(this.state);
+                                signup({
                                     variables: {
                                         username: this.state.username,
                                         password: this.state.password,

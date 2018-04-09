@@ -1,60 +1,96 @@
-const mongoose = require('mongoose');
-const passport = require('passport');
-const LocalStrategy = require('passport-local').Strategy;
+require("dotenv").load();
+var jwt = require("jsonwebtoken");
 
-const User = mongoose.model('User');
-
-passport.serializeUser((user, done) => {
-    done(null, user._id);
-});
-
-passport.deserializeUser((_id, done) => {
-    User.findById(_id, (err, user) => {
-        done(err, user);
-    });
-});
-
-passport.use(new LocalStrategy({ usernameField: 'email' }, (email, password, done) => {
-    User.findOne({ email: email.toLowerCase() }, (err, user) => {
-        if (err) { return done(err); }
-        if (!user) { return done(null, false, 'Invalid Credentials'); }
-        user.comparePassword(password, (err, isMatch) => {
-            if (err) { return done(err); }
-            if (isMatch) {
-                return done(null, user);
+exports.loginRequired = function(req, res, next) {
+    try {
+        const token = req.headers.authorization.split(" ")[1];
+        jwt.verify(token, process.env.SECRET_KEY, function(err, decoded) {
+            if (decoded) {
+                next();
+            } else {
+                return next({ status: 401, message: "Please Log In First" });
             }
-            return done(null, false, 'Invalid credentials.');
         });
-    });
-}));
+    } catch (e) {
+        return next({ status: 401, message: "Please Log In First" });
+    }
+};
 
-function signup({ email, password, req }) {
-    const user = new User({ email, password });
-    if (!email || !password) { throw new Error('You must provide an email and password.'); }
+exports.ensureCorrectUser = function(req, res, next) {
+    try {
+        const token = req.headers.authorization.split(" ")[1];
+        jwt.verify(token, process.env.SECRET_KEY, function(err, decoded) {
+            if (decoded && decoded.id === req.params.id) {
+                return next();
+            } else {
+                return next({ status: 401, message: "Unauthorized" });
+            }
+        });
+    } catch (e) {
+        return next({ status: 401, message: "Unauthorized" });
+    }
+};
 
-    return User.findOne({ email })
-        .then(existingUser => {
-            if (existingUser) { throw new Error('Email in use'); }
-            return user.save();
-        })
-        .then(user => {
-            return new Promise((resolve, reject) => {
-                req.logIn(user, (err) => {
-                    if (err) { reject(err); }
-                    resolve(user);
-                });
+exports.signin = async function(req, res, next) {
+    // finding a user
+    try {
+        let user = await db.User.findOne({
+            email: req.body.email
+        });
+        let { id, username, profileImageUrl } = user;
+        let isMatch = await user.comparePassword(req.body.password);
+        if (isMatch) {
+            let token = jwt.sign(
+                {
+                    id,
+                    username,
+                    profileImageUrl
+                },
+                process.env.SECRET_KEY
+            );
+            return res.status(200).json({
+                id,
+                username,
+                profileImageUrl,
+                token
             });
+        } else {
+            return next({
+                status: 400,
+                message: "Invalid Email/Password."
+            });
+        }
+    } catch (e) {
+        return next({ status: 400, message: "Invalid Email/Password." });
+    }
+};
+
+exports.signup = async function(req, res, next) {
+    try {
+        console.log(req);
+        let user = await db.User.create(req.body);
+        let { id, username, profileImageUrl } = user;
+        let token = jwt.sign(
+            {
+                id,
+                username,
+                profileImageUrl
+            },
+            process.env.SECRET_KEY
+        );
+        return res.status(200).json({
+            id,
+            username,
+            profileImageUrl,
+            token
         });
-}
-
-function login({ email, password, req }) {
-    return new Promise((resolve, reject) => {
-        passport.authenticate('local', (err, user) => {
-            if (!user) { reject('Invalid credentials.') }
-
-            req.login(user, () => resolve(user));
-        })({ body: { email, password } });
-    });
-}
-
-module.exports = { signup, login };
+    } catch (err) {
+        if (err.code === 11000) {
+            err.message = "Sorry, that username and/or email is taken";
+        }
+        return next({
+            status: 400,
+            message: err.message
+        });
+    }
+};
