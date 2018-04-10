@@ -72,8 +72,9 @@ exports.signup = async function(req, res, next) {
         let { id, username, profileImageUrl } = user;
         let token = jwt.sign(
             {
-                id,
+                _id,
                 username,
+                email,
                 profileImageUrl
             },
             process.env.SECRET_KEY

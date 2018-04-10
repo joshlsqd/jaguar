@@ -1,28 +1,30 @@
 import React, {Component} from 'react';
 import { ApolloProvider} from "react-apollo";
-import ApolloClient from 'apollo-boost';
-import { setContext } from 'apollo-link-context';
-import {BrowserRouter as Router, Route } from 'react-router-dom';
+import ApolloClient, {InMemoryCache, ApolloLink,HttpLink} from 'apollo-boost';
+import {BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import Navbar from '../containers/Navbar';
-import SignupForm from '../components/SignupForm';
+import AuthForm from '../components/AuthForm';
 import TaskForm from "../components/TaskForm";
 
+const httpLink = new HttpLink({
+    uri: "http://localhost:3001/graphql"
+});
 
-const authLink = setContext((_, { headers }) => {
-    // get the authentication token from local storage if it exists
-    const token = localStorage.getItem('token');
-    // return the headers to the context so httpLink can read them
-    return {
+const authLink = new ApolloLink((operation, forward) => {
+    const token = localStorage.getItem("token");
+    const authorizationHeader = token ? `Bearer ${token}` : null;
+    operation.setContext({
         headers: {
-            ...headers,
-            authorization: token ? `Bearer ${token}` : "",
+            authorization: authorizationHeader
         }
-    }
+    });
+    return forward(operation);
 });
 
 const client = new ApolloClient({
-    uri: "http://localhost:3001/graphql"
+    link: authLink.concat(httpLink),
+    cache: new InMemoryCache()
 });
 
 class App extends Component {
@@ -31,10 +33,15 @@ class App extends Component {
             <MuiThemeProvider>
             <ApolloProvider client={client}>
                 <Router>
-                    <Route path="taskform" component={TaskForm} />
                 <div>
-                <Navbar/>
-                <SignupForm/>
+                    <Navbar/>
+                    <div>
+                        <Switch>
+                            <Route path="taskform" component={TaskForm} />
+                            <Route path="signup" component={AuthForm} />
+                            <Route path="signup" component={AuthForm} />
+                        </Switch>
+                    </div>
                 </div>
                 </Router>
             </ApolloProvider>

@@ -44,7 +44,7 @@ const UserMutation = `
         password: String!, 
         username: String!,
         profileImageUrl: String
-        ): User
+        ): User        
 `;
 
 const UserQueryResolver = {
@@ -99,6 +99,8 @@ const UserMutationResolver = {
                         const token = jwt.sign({
                             id: user.id,
                             email: user.email,
+                            username: user.username,
+                            profileImageUrl: user.profileImageUrl
                         }, JWT_SECRET);
                         user.jwt = token;
                         ctx.user = Promise.resolve(user);
@@ -121,7 +123,7 @@ const UserMutationResolver = {
                     username: username || email,
                 })).then((user) => {
                     const { id } = user;
-                    const token = jwt.sign({ id, email }, JWT_SECRET);
+                    const token = jwt.sign({ id, email,username, profileImageUrl }, JWT_SECRET);
                     user.jwt = token;
                     ctx.user = Promise.resolve(user);
                     return user;
