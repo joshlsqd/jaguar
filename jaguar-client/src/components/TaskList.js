@@ -16,7 +16,6 @@ const TaskList = () => (
 }
  `}>
         { ({ loading, error, data }) => {
-            console.log(data.allTasks);
             if (loading) return <p>Loading...</p>;
             if (error) return <p>Error :(</p>;
             return <div>

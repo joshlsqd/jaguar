@@ -51,7 +51,9 @@ npm manifest:
       ]
     },
     "scripts": {
-      "start": "nodemon ./server.js --exec babel-node"
+      "server": "nodemon server.js",
+      "client" : "node ../jaguar-client/start-client.js",
+      "start" : "concurrently \"nodemon server.js\" \"npm run client\""
     },
     "author": "Jaguar"
   }
@@ -3573,9 +3575,9 @@ Lockfile:
 
 Trace: 
   Error: Command failed.
-  Exit code: 3221225786
+  Exit code: 1
   Command: C:\WINDOWS\system32\cmd.exe
-  Arguments: /d /s /c nodemon ./server.js --exec babel-node
+  Arguments: /d /s /c concurrently "nodemon server.js" "npm run client"
   Directory: C:\Users\JoshuaCook\Jaguar\jaguar-server
   Output:
   

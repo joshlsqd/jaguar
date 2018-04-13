@@ -1,6 +1,6 @@
 require('dotenv').config();
 import express from 'express';
-const session = require('express-session');
+import session from 'express-session';
 import { graphqlExpress, graphiqlExpress } from 'apollo-server-express';
 import bodyParser from 'body-parser';
 import schema from './apollo-graphql/schema.js';
@@ -35,10 +35,31 @@ mongoose.connect(mongo_uri, {
 const PORT = 3001;
 const app = express();
 
+const addUser = async (req, res, next) => {
+    const token = req.headers['x-token'];
+    if (token) {
+        try {
+            const { user } = jwt.verify(token, JWT_SECRET);
+            req.user = user;
+        } catch (err) {
+            const refreshToken = req.headers['x-refresh-token'];
+            const newTokens = await refreshTokens(token, refreshToken, models, JWT_SECRET);
+            if (newTokens.token && newTokens.refreshToken) {
+                res.set('Access-Control-Expose-Headers', 'x-token, x-refresh-token');
+                res.set('x-token', newTokens.token);
+                res.set('x-refresh-token', newTokens.refreshToken);
+            }
+            req.user = newTokens.user;
+        }
+    }
+    next();
+};
+
+app.use(addUser);
 app.use(session({
     resave: true,
     saveUninitialized: true,
-    secret: 'kldngo3qnvnfdskgrnophgkjfnksdgn',
+    secret: JWT_SECRET,
     store: new MongoStore({
         url: mongo_uri,
         autoReconnect: true
@@ -51,7 +72,7 @@ app.use('/graphql', bodyParser.json(), jwt({
     credentialsRequired: false,
 }), graphqlExpress(req => ({ schema,
     context: {
-        user: req.user ? User.findOne({ where: { id: req.user.id } }) : Promise.resolve(null),
+        user: req.user,
     User, Task, Time, PlannedTime, Organization, UsertypeOrg, Priority, Group, Milestone, Project, Requirement}
 })));
 app.use('/graphiql', graphiqlExpress({ endpointURL: '/graphql' }));
@@ -59,3 +80,6 @@ app.use('/graphiql', graphiqlExpress({ endpointURL: '/graphql' }));
 app.listen(PORT, function() {
     console.log(`GraphiQL is now running on http://localhost:${PORT}/graphiql`);
 });
+
+
+    // ? User.findOne({ where: { id: req.user.id } }) : Promise.resolve(null)

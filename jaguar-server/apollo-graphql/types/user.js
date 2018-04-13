@@ -7,6 +7,8 @@ require("dotenv").load();
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
 import { JWT_SECRET } from '../../config';
+import {emailError, usernameError, passwordError} from '../formatErrors';
+// import requiresAuth from '../permissions';
 
 const UserType = `
         type User {
@@ -22,6 +24,20 @@ const UserType = `
         organization: [Organization]
         jwt: String
     }
+    
+        type AuthPayload {
+            token: String
+            user: User
+        }
+        type Error {
+            path: String!
+            message: String 
+        }
+        type RegisterResponse {
+            ok: Boolean!
+            user: User
+            errors: [Error!] 
+        }
 `;
 
 const UserQuery =`
@@ -38,13 +54,12 @@ const UserMutation = `
     login(
         email: String!, 
         password: String!
-    ): User
+    ): AuthPayload
     signup(
         email: String!, 
         password: String!, 
-        username: String!,
-        profileImageUrl: String
-        ): User        
+        username: String!
+        ): RegisterResponse
 `;
 
 const UserQueryResolver = {
@@ -83,7 +98,7 @@ const UserNested =  {
 };
 
 const UserMutationResolver = {
-    updateUser: async (parent, args, {User}) => {
+    updateUser: async (parent, args,{User}, info) => {
         let user = await User.findByIdAndUpdate(args._id.toString(),);
         user._id = user._id.toString();
         return user
@@ -95,16 +110,10 @@ const UserMutationResolver = {
                 // validate password
                 return bcrypt.compare(password, user.password).then((res) => {
                     if (res) {
-                        // create jwt
-                        const token = jwt.sign({
-                            id: user.id,
-                            email: user.email,
-                            username: user.username,
-                            profileImageUrl: user.profileImageUrl
-                        }, JWT_SECRET);
-                        user.jwt = token;
-                        ctx.user = Promise.resolve(user);
-                        return user;
+                        return {
+                            token: jwt.sign({ userId: user._id }, JWT_SECRET),
+                            user
+                        }
                     }
                     return Promise.reject('password incorrect');
                 });
@@ -112,26 +121,40 @@ const UserMutationResolver = {
             return Promise.reject('email not found');
         });
     },
-    signup: function(_, { email, password, username, profileImageUrl }, {User}, ctx) {
-        // find user by email
-        return User.findOne({ where: { email } }).then((existing) => {
-            if (!existing) {
-                // hash password and create user
-                return bcrypt.hash(password, 10).then(hash => User.create({
+    signup: async (_, { email, password, username }, {User}) => {
+        try {
+            const err = [];
+            let emailErr = await emailError(email);
+            let passwordErr = await passwordError(password);
+            let usernameErr = await usernameError(username);
+            if(emailErr) { err.push(emailErr)}
+            if(passwordErr) { err.push(passwordErr)}
+            if(usernameErr) { err.push(usernameErr)}
+
+            if(!err.length) {
+                const hashedPassword = await bcrypt.hash(password, 10);
+                const user = await User.create({
+                    username,
                     email,
-                    password: hash,
-                    username: username || email,
-                })).then((user) => {
-                    const { id } = user;
-                    const token = jwt.sign({ id, email,username, profileImageUrl }, JWT_SECRET);
-                    user.jwt = token;
-                    ctx.user = Promise.resolve(user);
-                    return user;
+                    password: hashedPassword,
                 });
+                return {
+                    ok: true,
+                    user,
+                };
+            } else {
+                return {
+                    ok: false,
+                    errors: err,
+                }
             }
-            return Promise.reject('email already exists'); // email already exists
-        });
+        } catch (e) {
+            console.log(e.errors);
+            return {
+                ok: false,
+                errors: [{path: 'Signup', message: 'something did not go well'}]
+            }
+        }
     },
 };
-
 export {UserType, UserMutation, UserQuery, UserMutationResolver, UserQueryResolver, UserNested};

@@ -20,9 +20,7 @@
     "lodash": "^4.17.4",
     "mongodb": "^3.0.5",
     "mongoose": "^5.0.12",
-    "node-fetch": "^1.7.3",
-    "passport": "^0.4.0",
-    "passport-local": "^1.0.0"
+    "node-fetch": "^1.7.3"
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",

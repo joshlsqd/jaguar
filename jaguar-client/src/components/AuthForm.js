@@ -1,22 +1,25 @@
 import React, {Component} from 'react';
 import gql from "graphql-tag";
+import { Link } from 'react-router-dom';
 import { Mutation } from "react-apollo";
+import { AUTH_TOKEN } from '../constants'
 
-const ADD_USER = gql`
-mutation signup($username: String!, $password: String!, $email: String!, $profileImageUrl: String) {
-  signup(username: $username, password: $password, email: $email, profileImageUrl: $profileImageUrl) {
-    _id
-    username
-    profileImageUrl
-    email
-  }
-}
-`;
+const LOGIN_USER = gql`
+    mutation login( $password: String!, $email: String!) {
+        login(email: $email, password: $password) {
+        token
+        }
+    }`;
+
+const updateCache = (cache, {data}) => {
+    console.log(data, cache);
+};
 
 class AuthForm extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            _id: "",
             username: "",
             password: "",
             email: "",
@@ -25,84 +28,67 @@ class AuthForm extends Component {
     }
 
     render() {
-        const {email, username, password, profileImageUrl} = this.state;
+        const {email, password } = this.state;
         return (
-            <Mutation mutation={ADD_USER}>
-                {(signup, {data}) => (
+            <Mutation mutation={LOGIN_USER} updateCache={updateCache}>
+                {(login, {data}) => (
                     <div className='container'>
+                        <h4>Login</h4>
+                        <Link to="/signup" className="waves-effect waves-teal btn-flat"> need to create an account?</Link>
+                        <br/>
                         <div className='col s6'>
-                        <form
-                            onSubmit={e => {
-                                e.preventDefault();
-                                console.log(this.state);
-                                signup({
-                                    variables: {
-                                        username: username,
-                                        password: password,
-                                        email: email,
-                                        profileImageUrl: profileImageUrl
-                                    }
-                                });
+                                <form
+                                    onSubmit={async e => {
+                                        e.preventDefault();
+                                        await login({
+                                            variables: {
+                                                password: password,
+                                                email: email
+                                            }
+                                        });
+                                            console.log(data);
+                                            const {token} = data.signup;
+                                            this._saveUserData(token);
+                                    }}
+                                >
 
+                                    <div className="input-field col s6">
+                                        <i className="material-icons prefix">email</i>
+                                        <input
+                                            className="validate"
+                                            placeholder="email"
+                                            value={email}
+                                            type="text"
+                                            id="email"
+                                            name="email"
+                                            onChange={e => this.setState({ email: e.target.value })}
+                                        />
+                                    </div>
 
-                            }}
-                        >
-                            <div className="input-field col s6">
-                            <i className="material-icons prefix">email</i>
-                            <input
-                                className="validate"
-                                placeholder="email"
-                                value={email}
-                                type="text"
-                                id="email"
-                                name="email"
-                                onChange={e => this.setState({ email: e.target.value })}
-                            />
-                            </div>
-                            <div className="input-field col s6">
-                                <i className="material-icons prefix">account_circle</i>
-                                <input
-                                className="validate"
-                                placeholder="username"
-                                value={username}
-                                type="text"
-                                id="username"
-                                name="username"
-                                onChange={e => this.setState({ username: e.target.value })}
-                            />
-                            </div>
-                            <div className="input-field col s6">
-                                <i className="material-icons prefix">lock</i>
-                                <input
-                                className="validate"
-                                placeholder="password"
-                                value={password}
-                                type="text"
-                                id="password"
-                                name="password"
-                                onChange={e => this.setState({ password: e.target.value })}
-                            />
-                            </div>
-                            <div className="input-field col s6">
-                                <i className="material-icons prefix">image</i>
-                                <input
-                                className="validate"
-                                placeholder="profileImageUrl"
-                                value={profileImageUrl}
-                                type="text"
-                                id="profileImageUrl"
-                                name="profileImageUrl"
-                                onChange={e => this.setState({ profileImageUrl: e.target.value })}
-                            />
-                            </div>
-                            <a className="waves-effect waves-light btn indigo accent-2 right"><i className="material-icons left">whatshot</i>Signup</a>
-                        </form>
+                                    <div className="input-field col s6">
+                                        <i className="material-icons prefix">lock</i>
+                                        <input
+                                            className="validate"
+                                            placeholder="password"
+                                            value={password}
+                                            type="text"
+                                            id="password"
+                                            name="password"
+                                            onChange={e => this.setState({ password: e.target.value })}
+                                        />
+                                    </div>
+                                    <button type="submit" className="waves-effect waves-light btn indigo accent-2 right"><i className="material-icons left">whatshot</i>login</button>
+                                </form>
                         </div>
                     </div>
                 )}
             </Mutation>
         );
     };
+
+    _saveUserData = token => {
+        localStorage.setItem(AUTH_TOKEN, token)
+    }
 }
 
 export default AuthForm;

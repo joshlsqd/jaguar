@@ -1,20 +1,29 @@
 import mongoose from 'mongoose';
-const bcrypt = require("bcrypt");
 
 const userSchema = new mongoose.Schema({
     email: {
         type: String,
-        required: true,
-        unique: true
+        unique: true,
+        required: [true, 'email is required, thanks'],
+        lowercase: true,
+        validate: {
+            validator: function validateEmail(email) {
+            let re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+            return re.test(email);
+            },
+            message: 'sorry but we don\'t think that {VALUE} is a valid email'
+        }
     },
     username: {
         type: String,
-        required: true,
-        unique: true
+        unique:true,
+        lowercase: true,
+        required: [true, 'if this is blank how do we know what to call you'],
+        minlength: [4, 'we love brevity but that is too brev']
     },
     password: {
         type: String,
-        required: true
+        required: [true, 'We want you to be secure, please help'],
     },
     profileImageUrl: {
         type: String
@@ -43,28 +52,6 @@ const userSchema = new mongoose.Schema({
     {
         usePushEach: true
     });
-
-userSchema.pre("save", async function(next) {
-    try {
-        if (!this.isModified("password")) {
-            return next();
-        }
-        let hashedPassword = await bcrypt.hash(this.password, 10);
-        this.password = hashedPassword;
-        return next();
-    } catch (err) {
-        return next(err);
-    }
-});
-
-userSchema.methods.comparePassword = async function(candidatePassword, next) {
-    try {
-        let isMatch = await bcrypt.compare(candidatePassword, this.password);
-        return isMatch;
-    } catch (err) {
-        return next(err);
-    }
-};
 
 const User = mongoose.model("User", userSchema);
 
