@@ -6,9 +6,10 @@ import Organization from '../../models/organization';
 require("dotenv").load();
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
-import { JWT_SECRET } from '../../config';
+import { tryLogin } from '../auth';
 import {emailError, usernameError, passwordError} from '../formatErrors';
 // import requiresAuth from '../permissions';
+import {SECRET, SECRET2} from "../../server";
 
 const UserType = `
         type User {
@@ -25,9 +26,12 @@ const UserType = `
         jwt: String
     }
     
-        type AuthPayload {
+        type LoginResponse {
+            ok: Boolean!
             token: String
+            refreshToken: String
             user: User
+            errors: [Error!]
         }
         type Error {
             path: String!
@@ -54,7 +58,7 @@ const UserMutation = `
     login(
         email: String!, 
         password: String!
-    ): AuthPayload
+    ): LoginResponse!
     signup(
         email: String!, 
         password: String!, 
@@ -103,24 +107,8 @@ const UserMutationResolver = {
         user._id = user._id.toString();
         return user
     },
-    login: function(_, { email, password }, {User}, ctx) {
-        // find user by email
-        return User.findOne({ email }).then((user) => {
-            if (user) {
-                // validate password
-                return bcrypt.compare(password, user.password).then((res) => {
-                    if (res) {
-                        return {
-                            token: jwt.sign({ userId: user._id }, JWT_SECRET),
-                            user
-                        }
-                    }
-                    return Promise.reject('password incorrect');
-                });
-            }
-            return Promise.reject('email not found');
-        });
-    },
+    login: (parent, { email, password }, {SECRET, SECRET2 }) =>
+        tryLogin(email, password, SECRET, SECRET2),
     signup: async (_, { email, password, username }, {User}) => {
         try {
             const err = [];

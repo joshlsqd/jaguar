@@ -1,63 +1,81 @@
 import React, {Component} from 'react';
-import { ApolloProvider} from "react-apollo";
-import ApolloClient, {InMemoryCache, ApolloLink,HttpLink} from 'apollo-boost';
-import {BrowserRouter as Router, Route, Switch } from 'react-router-dom';
-import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
-import { defaults } from '../resolvers'
-import { AUTH_TOKEN } from '../constants'
-import Navbar from '../containers/Navbar';
-import AuthForm from '../components/AuthForm';
-import SignUpForm from '../components/SignUpForm';
-import TaskForm from "../components/TaskForm";
-import UserList from "../components/UserList";
+import {BrowserRouter as Router, Route, Switch, Redirect } from 'react-router-dom';
+import decode from 'jwt-decode';
+import Loadable from 'react-loadable';
+import Navbar from "./Navbar";
 
-
-const httpLink = new HttpLink({
-    uri: "http://localhost:3001/graphql"
-});
-
-const authLink = new ApolloLink((operation, forward) => {
-    const token = localStorage.getItem(AUTH_TOKEN);
-    const authorizationHeader = token ? `Bearer ${token}` : null;
-    operation.setContext({
-        headers: {
-            authorization: authorizationHeader
+const isAuthenticated = () => {
+    const token = localStorage.getItem('token');
+    const refreshToken = localStorage.getItem('refreshToken');
+    try {
+        decode(token);
+        const { exp } = decode(refreshToken);
+        if (Date.now() / 1000 > exp) {
+            return false;
         }
-    });
-    return forward(operation);
-});
-
-const httpLinkWithAuthToken = authLink.concat(httpLink);
-
-const client = new ApolloClient({
-    // link: httpLinkWithAuthToken,
-    uri: "http://localhost:3001/graphql",
-    cache: new InMemoryCache(),
-    clientState: {
-        defaults
+    } catch (err) {
+        return false;
     }
+
+    return true;
+};
+
+const PrivateRoute = ({ component: Component, ...rest }) => (
+    <Route
+        {...rest}
+        render={props =>
+            (isAuthenticated() ? (
+                <Component {...props} />
+            ) : (
+                <Redirect
+                    to={{
+                        pathname: '/login',
+                    }}
+                />
+            ))
+        }
+    />
+);
+
+const Loading = () => <div>...loading</div>;
+
+const AsyncHome = Loadable({
+    loader: () => import('../containers/Home'),
+    loading: Loading,
 });
+const AsyncSignUp = Loadable({
+    loader: () => import('./SignUpForm'),
+    loading: Loading,
+});
+const AsyncLogin = Loadable({
+    loader: () => import('./AuthForm'),
+    loading: Loading,
+});
+const AsyncViewUsers = Loadable({
+    loader: () => import('../components/UserList'),
+    loading: Loading,
+});
+const AsyncCreateOrg = Loadable({
+    loader: () => import('./CreateOrg'),
+    loading: Loading,
+});
+
 
 class App extends Component {
     render(){
         return(
-            <MuiThemeProvider>
-            <ApolloProvider client={client}>
-                <Router>
+            <Router>
                 <div>
-                    <Navbar/>
-                    <div>
-                        <Switch>
-                            <Route path="/taskform" component={TaskForm} />
-                            <Route path="/tasklist" component={UserList} />
-                            <Route path="/login" component={AuthForm} />
-                            <Route path="/signup" component={SignUpForm} />
-                        </Switch>
-                    </div>
+                <Navbar/>
+                <Switch>
+                    <Route path="/" exact component={AsyncHome} />
+                    <Route path="/signup" exact component={AsyncSignUp} />
+                    <Route path="/login" exact component={AsyncLogin} />
+                    <PrivateRoute path="/view-users" exact component={AsyncViewUsers} />
+                    <PrivateRoute path="/create-org" exact component={AsyncCreateOrg} />
+                </Switch>
                 </div>
-                </Router>
-            </ApolloProvider>
-            </MuiThemeProvider>
+            </Router>
         )
     }
 }

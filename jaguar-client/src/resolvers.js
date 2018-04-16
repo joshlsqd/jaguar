@@ -1,35 +1,44 @@
-// import gql from 'graphql-tag';
+import gql from 'graphql-tag';
 
 const defaults = {
-    currentUser: {
+    CurrentUser: {
+        __typename: 'CurrentUser',
         _id: "",
         email: "",
         username: "",
-        profileImageUrl:""
+        profileImageUrl:"",
+        isLoggedIn: false
     },
-    isLoggedin: false,
-    visibilityFilter: 'showAll',
-    networkStatus: {
-        __typename: 'NetworkStatus',
-        isConnected: false,
+};
+
+const resolvers = {
+    Mutation: {
+        setCurrentUser: (_, {_id, email, username, profileImageUrl}, {cache}) => {
+            const query = gql`
+                query getCurrentUser {
+                    CurrentUser @client {
+                        __typename
+                        _id
+                        email
+                        username
+                        profileImageUrl
+                    }
+                }`;
+            const previousState = cache.readQuery({ query });
+            const data = {
+                ...previousState,
+                CurrentUser: {
+                    ...previousState.CurrentUser,
+                    _id,
+                    email,
+                    username,
+                    profileImageUrl
+                }
+            };
+            console.log(data);
+            cache.writeData({ query, data })
+        },
     }
 };
 
-// const resolvers = {
-//     Mutation: {
-//         setCurrentUser: (_, {_id, email, username, profileImageUrl}, {cache}) => {
-//             const query = gql`
-//                 query getCurrentUser {
-//                     currentUser @client {
-//                         _id
-//                         email
-//                         username
-//                         profileImageUrl
-//                     }
-//                 }`;
-//             const currentUser
-//         }
-//     }
-// }
-
-export {defaults};
+export {defaults, resolvers};

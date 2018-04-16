@@ -1,6 +1,8 @@
 import React, {Component} from 'react';
 import gql from "graphql-tag";
 import { Mutation } from "react-apollo";
+import {Link} from 'react-router-dom';
+import { Form, Message, Button, Input, Container, Header } from 'semantic-ui-react';
 // import { AUTH_TOKEN } from '../constants'
 
 
@@ -27,22 +29,26 @@ class SignUpForm extends Component {
     };
 
     render() {
+        const {email, username, password, usernameError, emailError, passwordError} = this.state;
+        const errorList = [];
+
+        if (usernameError) {errorList.push(usernameError);}
+        if (emailError) { errorList.push(emailError);}
+        if (passwordError) {errorList.push(passwordError);}
+
         return (
             <Mutation mutation={ADD_USER}>
             {(signup, {data, loading, error}) => {
             return (
-                <div className='container'>
-                    <h4>Sign Up</h4>
-                    <div className="waves-effect waves-teal btn-flat">already have an account?</div>
-                    <br/>
-                    <div className='col s6'>
-                        <form onSubmit={async e => {
+                <Container text style={{ marginTop: '7em' }}>
+                    <Header as="h2">sign up</Header>
+                        <Form onSubmit={async e => {
                             e.preventDefault();
-                            const {email, username, password} = this.state;
+
                             const response = await signup({
                                 variables: {username, password, email}
                             });
-                            const { ok, errors } = response.data.register;
+                            const { ok, errors } = response.data.signup;
 
                             if (ok) {
                                 this.props.history.push('/');
@@ -58,43 +64,47 @@ class SignUpForm extends Component {
 
                             console.log(response);
                         }}>
-                            <div className="input-field col s6">
+
+                            <Form.Field error={!!emailError}>
                                 <i className="material-icons prefix">email</i>
-                                <input
+                                <Input
                                     autoFocus
-                                    className="validate"
+                                    fluid
                                     placeholder="email"
                                     value={this.state.email}
                                     type="text"
                                     onChange={e => this.setState({ email: e.target.value })}
                                 />
-                            </div>
+                            </Form.Field>
 
-                            <div className="input-field col s6">
+                            <Form.Field error={!!usernameError}>
                                 <i className="material-icons prefix">account_circle</i>
-                                <input
-                                    className="validate"
+                                <Input
                                     placeholder="username"
                                     value={this.state.username}
                                     type="text"
                                     onChange={e => this.setState({ username: e.target.value })}
+                                    fluid
                                 />
-                            </div>
+                            </Form.Field>
 
-                            <div className="input-field col s6">
+                            <Form.Field error={!!passwordError}>
                                 <i className="material-icons prefix">lock</i>
-                                <input
-                                    className="validate"
+                                <Input
                                     placeholder="password"
                                     value={this.state.password}
                                     type="text"
                                     onChange={e => this.setState({ password: e.target.value })}
+                                    fluid
                                 />
-                            </div>
-                            <button type="submit" className="waves-effect waves-light btn indigo accent-2 right"><i className="material-icons left">whatshot</i>Signup</button>
-                        </form>
-                    </div>
-                </div>
+                            </Form.Field>
+                            <Button floated='right' type="submit"><i className="material-icons left">whatshot</i>Signup</Button>
+                        </Form>
+                    {errorList.length ? (
+                        <Message error header="There was some errors with your submission" list={errorList} />
+                    ) : null}
+                    <div><Link to='/login' >already have an account?</Link></div>
+                </Container>
             )
         }}
     </Mutation>

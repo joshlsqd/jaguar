@@ -2,29 +2,33 @@ const mongoose = require("mongoose");
 
 const organizationSchema = new mongoose.Schema(
     {
-        organizationtitle: {
+        orgtitle: {
             type: String,
             required: true,
             maxLength: 50,
             minLength: 3
         },
-        organizationDescription: {
+        orgDescription: {
             type: String,
             maxLength: 160
         },
-        organizationcomments: [{
-            commentuser: {
-                type: mongoose.Schema.Types.ObjectId,
-                ref: "User"
-            },
-            organizationcomment: {
-                type: String
-            }
-        }],
+        // organizationcomments: [{
+        //     commentuser: {
+        //         type: mongoose.Schema.Types.ObjectId,
+        //         ref: "User"
+        //     },
+        //     organizationcomment: {
+        //         type: String
+        //     }
+        // }],
         users: [{
             type: mongoose.Schema.Types.ObjectId,
             ref: "User"
         }],
+        owner: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "User"
+        },
         usertype: [{
             type: mongoose.Schema.Types.ObjectId,
             ref: "User"

@@ -1,13 +1,22 @@
 import User from "../../models/user";
 import UserTypeOrg from "../../models/usertypeorg";
+import {orgError} from "../formatErrors";
+import requiresAuth from '../permissions';
 
 const OrganizationType = `
     type Organization {
         _id: String
-        organizationtitle: String
-        organizationdescription: String
+        orgtitle: String!
+        orgdescription: String
         usertypes: [UserTypeOrg]
+        owner: User
         users: [User]
+    }
+    
+    type CreateOrgResponse {
+        ok: Boolean!
+        organization: Organization
+        errors: [Error!]
     }
 `;
 
@@ -18,9 +27,10 @@ const OrganizationQuery = `
 
 const OrganizationMutation = `
     createOrganization(
-        orgtitle: String,
-        orgdescription: String
-) : Organization
+        orgtitle: String!,
+        orgdescription: String,
+        owner: String,
+    ) : CreateOrgResponse
 `;
 
 const OrganizationQueryResolver = {
@@ -46,10 +56,34 @@ const OrganizationNested = {
 };
 
 const OrganizationMutationResolver ={
-    createOrganization: async (parent, args, { Organization}) => {
-        let org = await new Organization(args).save();
-        return org
-    }
+    createOrganization: requiresAuth.createResolver(async (parent, {orgtitle, orgdescription, owner}, {Organization}) => {
+        try {
+            const err = [];
+            let orgtitleErr = await orgError(orgtitle);
+            if(orgtitleErr) { err.push(orgtitleErr)}
+            if(!err.length) {
+                const organization = await Organization.create({
+                    orgtitle,
+                    orgdescription,
+                    owner,
+                });
+                return {
+                    ok: true,
+                    organization,
+                };
+            } else {
+                return {
+                    ok: false,
+                    errors: err,
+                }
+            }
+        } catch (e) {
+            return {
+                ok: false,
+                errors: [{path: 'orgtitle', message: 'something did not go well'}]
+            }
+        }
+    })
 };
 
 export {OrganizationType, OrganizationMutation, OrganizationQuery, OrganizationQueryResolver, OrganizationNested, OrganizationMutationResolver};
