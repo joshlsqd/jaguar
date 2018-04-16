@@ -1,22 +1,9 @@
 import React, {Component} from 'react';
-import gql from "graphql-tag";
 import { Mutation } from "react-apollo";
 import {Link} from 'react-router-dom';
 import { Form, Message, Button, Input, Container, Header } from 'semantic-ui-react';
-// import { AUTH_TOKEN } from '../constants'
+import ADD_USER from "./apollo-graphql/addUser";
 
-
-const ADD_USER = gql`
-mutation signup($username: String!, $password: String!, $email: String!) {
-  signup(username: $username, password: $password, email: $email) {
-    ok
-    errors {
-      path
-      message
-    }
-  }
-}
-`;
 
 class SignUpForm extends Component {
     state = {
@@ -51,18 +38,16 @@ class SignUpForm extends Component {
                             const { ok, errors } = response.data.signup;
 
                             if (ok) {
-                                this.props.history.push('/');
+
+                                this.props.history.push('/login');
                             } else {
                                 const err = {};
                                 errors.forEach(({ path, message }) => {
                                     // err['passwordError'] = 'too long..';
                                     err[`${path}Error`] = message;
                                 });
-
                                 this.setState(err);
                             }
-
-                            console.log(response);
                         }}>
 
                             <Form.Field error={!!emailError}>

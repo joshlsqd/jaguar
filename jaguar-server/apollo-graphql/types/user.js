@@ -39,6 +39,8 @@ const UserType = `
         }
         type RegisterResponse {
             ok: Boolean!
+            token: String
+            refreshToken: String
             user: User
             errors: [Error!] 
         }
@@ -109,7 +111,7 @@ const UserMutationResolver = {
     },
     login: (parent, { email, password }, {SECRET, SECRET2 }) =>
         tryLogin(email, password, SECRET, SECRET2),
-    signup: async (_, { email, password, username }, {User}) => {
+    signup: async (_, { email, password, username, SECRET, SECRET2 }, {User}) => {
         try {
             const err = [];
             let emailErr = await emailError(email);

@@ -1,31 +1,10 @@
 import React, {Component} from 'react';
-import gql from "graphql-tag";
 import { Link } from 'react-router-dom';
 import { Mutation, graphql, compose } from "react-apollo";
 import { Message, Form, Button, Input, Container, Header, Icon } from 'semantic-ui-react';
-import setCurrentUser from './apollo-graphql/setCurrentUser'
+import setCurrentUser from './apollo-graphql/setCurrentUser';
 import getCurrentUser from "./apollo-graphql/getCurrentUser";
-
-
-const LOGIN_USER = gql`
-    mutation login( $password: String!, $email: String!) {
-        login(email: $email, password: $password) {
-        ok
-        token
-        refreshToken
-        user {
-            _id
-            email
-            username
-            profileImageUrl
-            }
-        errors {
-            path
-            message
-            }
-        }
-    }`;
-
+import LOGIN_USER from "./apollo-graphql/loginUser";
 
 class AuthForm extends Component {
     state = {
@@ -38,7 +17,7 @@ class AuthForm extends Component {
 
     render() {
         const { email, password, emailError, passwordError } = this.state;
-        const { setCurrentUser, CurrentUser: {_id, username,  profileImageUrl} } = this.props;
+        const { setCurrentUser } = this.props;
         const errorList = [];
         if (emailError) {errorList.push(emailError);}
         if (passwordError) {errorList.push(passwordError);}
@@ -60,7 +39,7 @@ class AuthForm extends Component {
                                 if (ok) {
                                     localStorage.setItem('token', token);
                                     localStorage.setItem('refreshToken', refreshToken);
-                                    setCurrentUser({
+                                    await setCurrentUser({
                                         variables: {
                                             _id: user._id,
                                             email: user.email,
@@ -68,7 +47,6 @@ class AuthForm extends Component {
                                             profileImageUrl: user.profileImageUrl
                                         }
                                     });
-                                    console.log('this completed');
                                     this.props.history.push('/');
                                 } else {
                                     const err = {};

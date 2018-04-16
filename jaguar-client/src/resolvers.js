@@ -35,7 +35,6 @@ const resolvers = {
                     profileImageUrl
                 }
             };
-            console.log(data);
             cache.writeData({ query, data })
         },
     }

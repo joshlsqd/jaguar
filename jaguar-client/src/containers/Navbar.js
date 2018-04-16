@@ -17,15 +17,21 @@ const Navbar = () => {
                 </Link>
             </Menu.Item>
             <Menu.Menu position='right'>
-            <Dropdown item simple text='Account'>
+            <Dropdown item simple text={authToken ? 'User' : 'Account'}>
                 <Dropdown.Menu id='navbarDropdown'>
                     {!authToken ? (
+                        <div>
                         <Dropdown.Item><Link to='/login'>login</Link></Dropdown.Item>
+                        <Dropdown.Item><Link to='/signup'>sign up</Link></Dropdown.Item>
+                        </div>
                         ):(
+                        <div>
+                        <Dropdown.Item><Link to='/view-users'>view users</Link></Dropdown.Item>
                         <Dropdown.Item><Link to='/' onClick={() => {
                             localStorage.removeItem('token');
                             this.props.history.push(`/`)
                         }}>log out</Link></Dropdown.Item>
+                        </div>
                     )}
                 </Dropdown.Menu>
             </Dropdown>
