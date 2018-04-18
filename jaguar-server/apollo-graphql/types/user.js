@@ -4,11 +4,9 @@ import PlannedTime from '../../models/plannedtime';
 import UserTypeOrg from '../../models/usertypeorg';
 import Organization from '../../models/organization';
 require("dotenv").load();
-import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
-import { tryLogin } from '../auth';
+import { tryLogin, refreshLogin } from '../auth';
 import {emailError, usernameError, passwordError} from '../formatErrors';
-// import requiresAuth from '../permissions';
 import {SECRET, SECRET2} from "../../server";
 
 const UserType = `
@@ -61,6 +59,9 @@ const UserMutation = `
         email: String!, 
         password: String!
     ): LoginResponse!
+    refreshUser(
+        token: String!
+    ): LoginResponse!
     signup(
         email: String!, 
         password: String!, 
@@ -111,6 +112,8 @@ const UserMutationResolver = {
     },
     login: (parent, { email, password }, {SECRET, SECRET2 }) =>
         tryLogin(email, password, SECRET, SECRET2),
+    refreshUser: (parent, { token }, {SECRET}) =>
+        refreshLogin(token, SECRET),
     signup: async (_, { email, password, username, SECRET, SECRET2 }, {User}) => {
         try {
             const err = [];

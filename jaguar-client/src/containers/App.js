@@ -44,21 +44,26 @@ const AsyncHome = Loadable({
     loading: Loading,
 });
 const AsyncSignUp = Loadable({
-    loader: () => import('./SignUpForm'),
+    loader: () => import('./authorization/SignUpForm'),
     loading: Loading,
 });
 const AsyncLogin = Loadable({
-    loader: () => import('./AuthForm'),
+    loader: () => import('./authorization/AuthForm'),
     loading: Loading,
 });
 const AsyncViewUsers = Loadable({
-    loader: () => import('../components/UserList'),
+    loader: () => import('./authorization/UserList'),
+    loading: Loading,
+});
+const AsyncView = Loadable({
+    loader: () => import('./UserView'),
     loading: Loading,
 });
 const AsyncCreateOrg = Loadable({
-    loader: () => import('./CreateOrg'),
+    loader: () => import('./org_team/OrgForm'),
     loading: Loading,
 });
+
 
 
 class App extends Component {
@@ -72,6 +77,7 @@ class App extends Component {
                     <Route path="/signup" exact component={AsyncSignUp} />
                     <Route path="/login" exact component={AsyncLogin} />
                     <PrivateRoute path="/view-users" exact component={AsyncViewUsers} />
+                    <PrivateRoute path="/view" exact component={AsyncView} />
                     <PrivateRoute path="/create-org" exact component={AsyncCreateOrg} />
                 </Switch>
                 </div>

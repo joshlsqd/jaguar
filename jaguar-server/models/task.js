@@ -23,16 +23,16 @@ const taskSchema = new mongoose.Schema(
             type: mongoose.Schema.Types.ObjectId,
             ref: "User"
         }],
-        // taskcomments: [{
-        //     commentuser: {
-        //     type: mongoose.Schema.Types.ObjectId,
-        //     ref: "User"
-        //     },
-        //     taskcomment: {
-        //     type: String,
-        //     maxlength: 160
-        //     }
-        // }],
+        isCompleted: {
+            type: Boolean,
+            default: false
+        },
+        plandate: {
+          type: Date,
+        },
+        taskstatus: {
+          type: String,
+        },
         tasktime: [{
             type: mongoose.Schema.Types.ObjectId,
             ref: "Time"
@@ -47,10 +47,10 @@ const taskSchema = new mongoose.Schema(
         duedate: {
             type: Date
         },
-        // tasktype: {
-        //     type: mongoose.Schema.Types.ObjectId,
-        //     ref: "TaskType"
-        // },
+        tasktype: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "TaskType"
+        },
         priority: {
             type: mongoose.Schema.Types.ObjectId,
             ref: "Priority"

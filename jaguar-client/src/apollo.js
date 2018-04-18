@@ -1,15 +1,18 @@
 
 import ApolloClient, {InMemoryCache, ApolloLink, split} from 'apollo-boost';
+import { persistCache } from 'apollo-cache-persist';
 import {getMainDefinition} from 'apollo-utilities'
 import {setContext} from 'apollo-link-context';
 import createFileLink from './createFileLink';
-import {defaults, resolvers} from "./resolvers";
 
 
 const httpLink = new createFileLink({ uri: `http://localhost:3001/graphfql` });
 
-const cache = new InMemoryCache();
-
+const cache = new InMemoryCache({});
+persistCache({
+    cache,
+    storage: window.localStorage,
+});
 
 const middlewareLink = setContext(() => ({
     headers: {
@@ -24,7 +27,7 @@ const afterwareLink = new ApolloLink((operation, forward) =>
         if (headers) {
             const token = headers.get('x-token');
             const refreshToken = headers.get('x-refresh-token');
-
+            //set up user auth here
             if (token) {
                 localStorage.setItem('token', token);
             }
@@ -53,8 +56,5 @@ export default new ApolloClient({
     uri: 'http://localhost:3001/graphql',
     link,
     cache,
-    clientState: {
-        defaults,
-        resolvers
-    }
+    clientState: {}
 });

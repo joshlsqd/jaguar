@@ -26,6 +26,7 @@ const Navbar = () => {
                         </div>
                         ):(
                         <div>
+                        <Dropdown.Item><Link to='/view'>tasks</Link></Dropdown.Item>
                         <Dropdown.Item><Link to='/view-users'>view users</Link></Dropdown.Item>
                         <Dropdown.Item><Link to='/' onClick={() => {
                             localStorage.removeItem('token');

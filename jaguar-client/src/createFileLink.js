@@ -1,4 +1,4 @@
-import { ApolloLink, Observable } from 'apollo-link';
+import { ApolloLink, Observable } from 'apollo-boost';
 import { print } from 'graphql/language/printer';
 import has from 'lodash/has';
 

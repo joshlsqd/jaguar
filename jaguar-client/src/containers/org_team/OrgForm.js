@@ -15,7 +15,7 @@ const CREATE_ORG = gql`
         }
     }`;
 
-class CreateOrg extends Component {
+class OrgForm extends Component {
     state = {
         orgtitle: "",
         orgdescription: "",
@@ -88,4 +88,4 @@ class CreateOrg extends Component {
     };
 }
 
-export default CreateOrg;
+export default OrgForm;

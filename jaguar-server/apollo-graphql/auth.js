@@ -5,7 +5,7 @@ import User from '../models/user'
 
 export const createTokens = async (user, secret, secret2) => {
     const createToken = jwt.sign(
-        {user: _.pick(user, ['_id', 'username']),}, secret,{ expiresIn: '1h', },
+        {user: _.pick(user, ['_id', 'username', 'email', 'profileImageUrl' ]),}, secret,{ expiresIn: '1h', },
     );
 
     const createRefreshToken = jwt.sign(
@@ -45,7 +45,15 @@ export const refreshTokens = async (token, refreshToken, SECRET, SECRET2) => {
         user,
     };
 };
-
+export const refreshLogin = async (token, SECRET) => {
+    const user = jwt.verify(token, SECRET);
+    console.log(user);
+    return {
+        ok: true,
+        token,
+        user,
+    };
+}
 export const tryLogin = async (email, password, SECRET, SECRET2) => {
     const user = await User.findOne({ email });
     if (!user) {

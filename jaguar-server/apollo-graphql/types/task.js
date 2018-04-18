@@ -9,6 +9,9 @@ const TaskType = `
         _id: String
         tasktitle: String
         taskdescription: String
+        isCompleted: Boolean
+        plandate: String
+        taskstatus: String
         taskcurrentowner: User
         taskpriorowners: [User]
         tasktime: [Time]
@@ -24,13 +27,15 @@ const TaskType = `
 const TaskQuery = `
     allTasks: [Task]
     task(_id: String): Task
+    tasksByUser(taskcurrentowner: String): [Task]
 `;
 
 const TaskMutation = `
     createTask(
         tasktitle: String,
         taskdescription: String,
-        taskcurrentowner: String
+        taskcurrentowner: String,
+        plandate: String,
 ) : Task
 `;
 
@@ -44,6 +49,10 @@ const TaskQueryResolver = {
     },
     task: async (parent, args, {Task}) => {
         return await Task.findById(args._id.toString())
+    },
+    tasksByUser: async (parent, args, {Task}) => {
+        const owner = await User.findById(args.taskcurrentowner.toString());
+        return await Task.find({taskcurrentowner: owner})
     },
 };
 
@@ -70,6 +79,7 @@ const TaskNested = {
 
 const TaskMutationResolver ={
     createTask: async (parent, args, { Task, User }) => {
+        console.log(args);
         let task = await new Task(args).save();
         let owner = await User.findById(args.taskcurrentowner);
         owner.tasks.push(task._id);

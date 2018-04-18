@@ -6,7 +6,11 @@
       <w>navbar</w>
       <w>orgdescription</w>
       <w>orgtitle</w>
+      <w>plandate</w>
       <w>signup</w>
+      <w>taskcurrentowner</w>
+      <w>taskdescription</w>
+      <w>tasktitle</w>
       <w>usertypes</w>
     </words>
   </dictionary>

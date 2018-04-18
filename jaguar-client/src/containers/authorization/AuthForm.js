@@ -2,9 +2,7 @@ import React, {Component} from 'react';
 import { Link } from 'react-router-dom';
 import { Mutation, graphql, compose } from "react-apollo";
 import { Message, Form, Button, Input, Container, Header, Icon } from 'semantic-ui-react';
-import setCurrentUser from './apollo-graphql/setCurrentUser';
-import getCurrentUser from "./apollo-graphql/getCurrentUser";
-import LOGIN_USER from "./apollo-graphql/loginUser";
+import {loginUser, getCurrentUser} from "../apollo-graphql/userQueries";
 
 class AuthForm extends Component {
     state = {
@@ -17,13 +15,12 @@ class AuthForm extends Component {
 
     render() {
         const { email, password, emailError, passwordError } = this.state;
-        const { setCurrentUser } = this.props;
         const errorList = [];
         if (emailError) {errorList.push(emailError);}
         if (passwordError) {errorList.push(passwordError);}
 
         return (
-            <Mutation mutation={LOGIN_USER}>
+            <Mutation mutation={loginUser}>
                 {(login, {data}) => (
                     <div>
                     <Container text style={{ marginTop: '7em' }}>
@@ -35,19 +32,11 @@ class AuthForm extends Component {
                                 const response = await login({
                                     variables: {password: password,email: email}
                                 });
-                                    const {ok, token, refreshToken, user, errors,} = response.data.login;
+                                    const {ok, token, refreshToken, errors,} = response.data.login;
                                 if (ok) {
                                     localStorage.setItem('token', token);
                                     localStorage.setItem('refreshToken', refreshToken);
-                                    await setCurrentUser({
-                                        variables: {
-                                            _id: user._id,
-                                            email: user.email,
-                                            username: user.username,
-                                            profileImageUrl: user.profileImageUrl
-                                        }
-                                    });
-                                    this.props.history.push('/');
+                                    this.props.history.push('/view');
                                 } else {
                                     const err = {};
                                     errors.forEach(({ path, message }) => {
@@ -98,7 +87,6 @@ class AuthForm extends Component {
 }
 
 export default compose(
-    graphql(setCurrentUser, {name: 'setCurrentUser'}),
     graphql(getCurrentUser,{
         props: ({data: { CurrentUser, loading }}) => ({
             CurrentUser,

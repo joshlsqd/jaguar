@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import { Mutation } from "react-apollo";
 import {Link} from 'react-router-dom';
 import { Form, Message, Button, Input, Container, Header } from 'semantic-ui-react';
-import ADD_USER from "./apollo-graphql/addUser";
+import {addUser} from "../apollo-graphql/userQueries";
 
 
 class SignUpForm extends Component {
@@ -24,7 +24,7 @@ class SignUpForm extends Component {
         if (passwordError) {errorList.push(passwordError);}
 
         return (
-            <Mutation mutation={ADD_USER}>
+            <Mutation mutation={addUser}>
             {(signup, {data, loading, error}) => {
             return (
                 <Container text style={{ marginTop: '7em' }}>
