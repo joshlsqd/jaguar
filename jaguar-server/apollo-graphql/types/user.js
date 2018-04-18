@@ -52,8 +52,11 @@ const UserQuery =`
 
 const UserMutation = `
     updateUser(
+        _id: String 
         usertypeorg: String
         organization: String
+        username: String
+        profileImageUrl: String
     ) : User
     login(
         email: String!, 
@@ -106,8 +109,7 @@ const UserNested =  {
 
 const UserMutationResolver = {
     updateUser: async (parent, args,{User}, info) => {
-        let user = await User.findByIdAndUpdate(args._id.toString(),);
-        user._id = user._id.toString();
+        let user = await User.findByIdAndUpdate(args._id.toString(),{$set: {username:args.username, profileImageUrl:args.profileImageUrl}});
         return user
     },
     login: (parent, { email, password }, {SECRET, SECRET2 }) =>

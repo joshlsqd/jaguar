@@ -28,6 +28,7 @@ const Navbar = () => {
                         <div>
                         <Dropdown.Item><Link to='/view'>tasks</Link></Dropdown.Item>
                         <Dropdown.Item><Link to='/view-users'>view users</Link></Dropdown.Item>
+                        <Dropdown.Item><Link to='/update-user'>Update User</Link></Dropdown.Item>
                         <Dropdown.Item><Link to='/' onClick={() => {
                             localStorage.removeItem('token');
                             this.props.history.push(`/`)
