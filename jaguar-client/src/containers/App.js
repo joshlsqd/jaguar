@@ -55,6 +55,10 @@ const AsyncViewUsers = Loadable({
     loader: () => import('./authorization/UserList'),
     loading: Loading,
 });
+const AsyncUpdateUser = Loadable({
+    loader: () => import('./authorization/UpdateUser'),
+    loading: Loading,
+});
 const AsyncView = Loadable({
     loader: () => import('./UserView'),
     loading: Loading,
@@ -78,6 +82,7 @@ class App extends Component {
                     <Route path="/login" exact component={AsyncLogin} />
                     <PrivateRoute path="/view-users" exact component={AsyncViewUsers} />
                     <PrivateRoute path="/view" exact component={AsyncView} />
+                    <PrivateRoute path="/update-user" exact component={AsyncUpdateUser} />
                     <PrivateRoute path="/create-org" exact component={AsyncCreateOrg} />
                 </Switch>
                 </div>
