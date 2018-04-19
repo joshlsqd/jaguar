@@ -1,3 +1,7 @@
+import User from "../../models/user";
+import Time from "../../models/time";
+
+
 const CommentType = `
     type Comment {
         _id: String
