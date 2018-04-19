@@ -2,6 +2,7 @@ import React from 'react';
 import {Link} from 'react-router-dom';
 import Logo from '../images/jaguarwhite.png';
 import { Menu, Image, Dropdown} from 'semantic-ui-react';
+import client from '../apollo';
 import './Navbar.css';
 
 const Navbar = () => {
@@ -30,6 +31,7 @@ const Navbar = () => {
                         <Dropdown.Item><Link to='/view-users'>view users</Link></Dropdown.Item>
                         <Dropdown.Item><Link to='/' onClick={() => {
                             localStorage.removeItem('token');
+                            client.cache.reset();
                             this.props.history.push(`/`)
                         }}>log out</Link></Dropdown.Item>
                         </div>

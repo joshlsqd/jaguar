@@ -3,7 +3,6 @@ import { render } from "react-dom";
 import { ApolloProvider} from "react-apollo";
 import client from './apollo';
 import App from './containers/App';
-import 'semantic-ui-css/semantic.min.css';
 import registerServiceWorker from './registerServiceWorker';
 
 

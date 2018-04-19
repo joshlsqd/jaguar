@@ -1,40 +1,59 @@
 import React, {Component} from 'react';
 import { Query } from "react-apollo";
-import { List,Header, Segment, Divider} from 'semantic-ui-react';
+import { List,Header, Segment, Dimmer, Loader} from 'semantic-ui-react';
 import moment from 'moment';
 import decode from 'jwt-decode';
-import {tasksByUser} from "../apollo-graphql/taskQueries";
+import {tasksToday} from "../apollo-graphql/taskQueries";
 import TaskForm from './taskscomponents/TaskForm';
+import TaskComplete from './taskscomponents/TaskComplete';
+
 const token = localStorage.getItem('token');
 
 class TaskToday extends Component {
 
     render() {
+
         const { user } = decode(token);
+        const today = moment(Date.now()).format('YYYY-MM-DD');
+        const variables = {taskcurrentowner: user._id, iscompleted: false, plandate: today};
         return(
-            <Query query={tasksByUser} variables={{taskcurrentowner: user._id}}>
+            <Query query={tasksToday} variables={variables}>
                 { ({ loading, error, data }) => {
-                    if (loading) return <p>Loading...</p>;
+                    if (loading) return (
+                        <div>
+                            <Dimmer active>
+                                <Loader />
+                            </Dimmer>
+                        </div>);
                     if (error) return <p>Error :(</p>;
                     return <div>
                         <Segment>
                             <Header>Today</Header>
-                            <Divider section />
-                            <List>
-                            {data.tasksByUser.map(({_id, tasktitle}) => (
+                            <List divided relaxed>
+                            {data.tasksToday.map(({_id, tasktitle}) => (
+
                                 <List.Item key={_id}>
-                                    <List.Icon name='check circle' size='large' verticalAlign='middle' />
+                                    <TaskComplete
+                                        _id={_id}
+                                        completeddate={today}
+                                        updateQuery={tasksToday}
+                                        variables={variables}
+                                    />
                                     <List.Icon name='hourglass empty' size='large' verticalAlign='middle' />
                                     <List.Content>
                                         <List.Header as='a'>{tasktitle}</List.Header>
                                         <List.Description as='a'>text tbd</List.Description>
                                     </List.Content>
-                                    <Divider section />
                                 </List.Item>
                             ))
                             }
                             </List>
-                            <TaskForm taskcurrentowner={user._id} plandate={moment(Date.now()).format('YYYY-MM-DDTHH:mm:ss.mmm')}/>
+                            <TaskForm
+                                taskcurrentowner={user._id}
+                                plandate={today}
+                                updateQuery={tasksToday}
+                                variables={{taskcurrentowner: user._id, iscompleted: false, plandate: today}}
+                            />
                         </Segment>
                     </div>;
                 }
