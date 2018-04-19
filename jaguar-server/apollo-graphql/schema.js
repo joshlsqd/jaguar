@@ -13,6 +13,7 @@ import {PriorityMutation, PriorityQuery, PriorityType} from "./types/priority";
 import {MilestoneMutation, MilestoneQuery, MilestoneType} from "./types/milestone";
 import {ProjectMutation, ProjectQuery, ProjectType} from "./types/project";
 import {RequirementMutation, RequirementQuery, RequirementType} from "./types/requirement";
+import {TeamMutation, TeamQuery, TeamType} from "./types/team";
 
 //schema for graphql
 const typeDefs = `
@@ -27,6 +28,7 @@ const typeDefs = `
     ${MilestoneType}
     ${ProjectType}
     ${RequirementType}
+    ${TeamType}
     
     type Query {
         ${UserQuery}
@@ -40,6 +42,7 @@ const typeDefs = `
         ${MilestoneQuery}
         ${ProjectQuery}
         ${RequirementQuery}
+        ${TeamQuery}
     }
     type Mutation {
         ${TaskMutation}
@@ -53,6 +56,7 @@ const typeDefs = `
         ${MilestoneMutation}
         ${ProjectMutation}
         ${RequirementMutation}
+        ${TeamMutation}
     }
 `;
 
