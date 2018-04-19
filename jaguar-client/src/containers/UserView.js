@@ -4,6 +4,7 @@ import TaskDay from './taskview/TaskDay'
 import TaskUnplanned from './taskview/TaskUnplanned'
 import moment from 'moment';
 import AppLayout from './layout/AppLayout'
+import NavSidebar from './layout/NavSidebar'
 
 class UserView extends Component {
 
@@ -15,6 +16,7 @@ class UserView extends Component {
         const plus5 = moment(Date.now()).add(5,'day').format('YYYY-MM-DD');
         return(
             <AppLayout>
+                <NavSidebar/>
                 <div ><TaskToday /></div>
                 <div className='section B'><TaskUnplanned /></div>
                 <div className='section C'>

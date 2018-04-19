@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import {BrowserRouter as Router, Route, Switch, Redirect } from 'react-router-dom';
 import decode from 'jwt-decode';
 import Loadable from 'react-loadable';
-import Navbar from "./Navbar";
+
 
 const isAuthenticated = () => {
     const token = localStorage.getItem('token');
@@ -71,7 +71,6 @@ class App extends Component {
         return(
             <Router>
                 <div>
-                <Navbar/>
                 <Switch>
                     <Route path="/" exact component={AsyncHome} />
                     <Route path="/signup" exact component={AsyncSignUp} />

@@ -1,5 +1,4 @@
 import User from "../../models/user";
-import UserTypeOrg from "../../models/usertypeteam";
 import {teamError} from "../formatErrors";
 import requiresAuth from '../permissions';
 
@@ -58,7 +57,7 @@ const TeamMutationResolver ={
             let teamtitleErr = await teamError(teamtitle);
             if(teamtitleErr) { err.push(teamtitleErr)}
             if(!err.length) {
-                const teamanization = await Team.create({
+                const team = await Team.create({
                     teamtitle,
                     teamdescription,
                     owner,
