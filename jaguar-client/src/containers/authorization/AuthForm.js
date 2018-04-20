@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import { Link } from 'react-router-dom';
 import { Mutation, graphql, compose } from "react-apollo";
 import { Message, Form, Button, Input, Container, Header, Icon } from 'semantic-ui-react';
+import Navbar from "../Navbar";
 import {loginUser, getCurrentUser} from "../apollo-graphql/userQueries";
 
 class AuthForm extends Component {
@@ -23,6 +24,7 @@ class AuthForm extends Component {
             <Mutation mutation={loginUser}>
                 {(login, {data}) => (
                     <div>
+                    <Navbar/>
                     <Container text style={{ marginTop: '7em' }}>
                         <Header as="h2">login</Header>
                         <Form

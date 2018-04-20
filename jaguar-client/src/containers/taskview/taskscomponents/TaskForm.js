@@ -10,21 +10,22 @@ class TaskForm extends Component {
     };
 
     render() {
+        const {taskcurrentowner, plandate, updateQuery, variables} = this.props;
+
         const { newTask } = this.state;
-        const {taskcurrentowner, plandate} = this.props;
-        console.log(plandate);
+
         return (
             <Mutation mutation={createTask}>
                 {(createTask, {data}) => {
                     return (
-                        <div>
+                        <div style={{marginBottom: '.5em'}}>
                             <Form
                                 onSubmit={async e => {
                                     e.preventDefault();
-                                    const response = await createTask({
-                                        variables: {tasktitle: newTask, taskcurrentowner, plandate}
+                                    await createTask({
+                                        variables: {tasktitle: newTask, taskcurrentowner, iscompleted: false, plandate},
+                                        refetchQueries: [{ query: updateQuery, variables: variables}]
                                     });
-                                    console.log(response);
                                     this.setState({newTask: ""});
                                 }}
                             >

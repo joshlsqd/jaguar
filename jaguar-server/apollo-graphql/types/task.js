@@ -9,7 +9,8 @@ const TaskType = `
         _id: String
         tasktitle: String
         taskdescription: String
-        isCompleted: Boolean
+        iscompleted: Boolean
+        completeddate: String
         plandate: String
         taskstatus: String
         taskcurrentowner: User
@@ -27,7 +28,9 @@ const TaskType = `
 const TaskQuery = `
     allTasks: [Task]
     task(_id: String): Task
-    tasksByUser(taskcurrentowner: String): [Task]
+    tasksByUser(taskcurrentowner: String, iscompleted: Boolean): [Task]
+    tasksByDay(taskcurrentowner: String, iscompleted: Boolean, plandate: String): [Task]
+    tasksToday(taskcurrentowner: String, iscompleted: Boolean, plandate: String): [Task]
 `;
 
 const TaskMutation = `
@@ -36,6 +39,12 @@ const TaskMutation = `
         taskdescription: String,
         taskcurrentowner: String,
         plandate: String,
+        iscompleted: Boolean
+) : Task
+    completeTask(
+        _id: String!
+        iscompleted: Boolean
+        completeddate: String
 ) : Task
 `;
 
@@ -52,7 +61,15 @@ const TaskQueryResolver = {
     },
     tasksByUser: async (parent, args, {Task}) => {
         const owner = await User.findById(args.taskcurrentowner.toString());
-        return await Task.find({taskcurrentowner: owner})
+        return await Task.find({taskcurrentowner: owner, iscompleted: args.iscompleted, plandate: null})
+    },
+    tasksByDay: async (parent, args, {Task}) => {
+        const owner = await User.findById(args.taskcurrentowner.toString());
+        return await Task.find({taskcurrentowner: owner, iscompleted: args.iscompleted, plandate: new Date(args.plandate)})
+    },
+    tasksToday: async (parent, args, {Task}) => {
+        const owner = await User.findById(args.taskcurrentowner.toString());
+        return await Task.find({taskcurrentowner: owner, iscompleted: args.iscompleted, plandate: {$lte: new Date(args.plandate)}})
     },
 };
 
@@ -79,12 +96,20 @@ const TaskNested = {
 
 const TaskMutationResolver ={
     createTask: async (parent, args, { Task, User }) => {
-        console.log(args);
         let task = await new Task(args).save();
         let owner = await User.findById(args.taskcurrentowner);
         owner.tasks.push(task._id);
         await owner.save();
         return task
+    },
+    completeTask: async (parent, args, {Task}) =>{
+        let task = await Task.findByIdAndUpdate(
+            args._id,
+            {$set: {iscompleted: args.iscompleted
+                    , completeddate: args.completeddate}}, function (err, task){
+                if(err) return err;
+                return task;
+            });
     }
 }; 
 

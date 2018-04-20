@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import {BrowserRouter as Router, Route, Switch, Redirect } from 'react-router-dom';
 import decode from 'jwt-decode';
 import Loadable from 'react-loadable';
-import Navbar from "./Navbar";
+
 
 const isAuthenticated = () => {
     const token = localStorage.getItem('token');
@@ -51,10 +51,6 @@ const AsyncLogin = Loadable({
     loader: () => import('./authorization/AuthForm'),
     loading: Loading,
 });
-const AsyncUpdateUser = Loadable({
-    loader: () => import('../containers/UpdateUser'),
-    loading: Loading,
-});
 const AsyncViewUsers = Loadable({
     loader: () => import('./authorization/UserList'),
     loading: Loading,
@@ -75,12 +71,10 @@ class App extends Component {
         return(
             <Router>
                 <div>
-                <Navbar/>
                 <Switch>
                     <Route path="/" exact component={AsyncHome} />
                     <Route path="/signup" exact component={AsyncSignUp} />
                     <Route path="/login" exact component={AsyncLogin} />
-                    <PrivateRoute path='/update-user' exact component={AsyncUpdateUser} />
                     <PrivateRoute path="/view-users" exact component={AsyncViewUsers} />
                     <PrivateRoute path="/view" exact component={AsyncView} />
                     <PrivateRoute path="/create-org" exact component={AsyncCreateOrg} />

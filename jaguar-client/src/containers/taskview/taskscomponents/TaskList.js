@@ -3,7 +3,7 @@ import gql from "graphql-tag";
 import { Query } from "react-apollo";
 
 const TaskList = () => (
-    <Query query={gql`
+    {gql`
  {
   allTasks {
     _id

@@ -23,12 +23,15 @@ const taskSchema = new mongoose.Schema(
             type: mongoose.Schema.Types.ObjectId,
             ref: "User"
         }],
-        isCompleted: {
+        iscompleted: {
             type: Boolean,
             default: false
         },
         plandate: {
           type: Date,
+        },
+        completeddate: {
+            type: Date,
         },
         taskstatus: {
           type: String,
