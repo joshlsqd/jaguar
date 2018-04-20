@@ -18,7 +18,7 @@ class TaskForm extends Component {
             <Mutation mutation={createTask}>
                 {(createTask, {data}) => {
                     return (
-                        <div>
+                        <div style={{marginBottom: '.5em'}}>
                             <Form
                                 onSubmit={async e => {
                                     e.preventDefault();

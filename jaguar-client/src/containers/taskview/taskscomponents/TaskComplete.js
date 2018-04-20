@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import { graphql } from "react-apollo";
 import {completeTask} from '../../apollo-graphql/taskQueries';
-import { List } from 'semantic-ui-react';
+import { List} from 'semantic-ui-react';
 
 class TaskComplete extends Component {
     render() {
@@ -12,15 +12,19 @@ class TaskComplete extends Component {
             })
         };
         return(
+
             <List.Icon
                 name='check circle'
                 size='large'
+                color='green'
                 verticalAlign='middle'
                 style={{
                     paddingRight: '.5em',
                 }}
                 onClick={() => _complete()}
+
             />
+
         )
     }
 }

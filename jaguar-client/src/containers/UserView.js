@@ -5,6 +5,10 @@ import TaskUnplanned from './taskview/TaskUnplanned'
 import moment from 'moment';
 import AppLayout from './layout/AppLayout'
 import NavSidebar from './layout/NavSidebar'
+import MainSidebar from './layout/MainSidebar'
+import Header from './layout/Header'
+import ContentArea from './layout/ContentArea'
+import {Section} from './layout/Section'
 
 class UserView extends Component {
 
@@ -17,18 +21,22 @@ class UserView extends Component {
         return(
             <AppLayout>
                 <NavSidebar/>
-                <div ><TaskToday /></div>
-                <div className='section B'><TaskUnplanned /></div>
-                <div className='section C'>
-                    <div className='subsections sA'><TaskDay day={tomorrow}/></div>
-                    <div className='subsections sB'><TaskDay day={plus2}/></div>
-                    <div className='subsections sC'><TaskDay day={plus3}/></div>
-                    <div className='subsections sD'><TaskDay day={plus4}/></div>
-                    <div className='subsections sE'><TaskDay day={plus5}/></div>
-                </div>
+                <MainSidebar><TaskToday /></MainSidebar>
+                <Header/>
+                <ContentArea>
+                <Section><TaskDay day={tomorrow}/></Section>
+                <Section><TaskDay day={plus2}/></Section>
+                <Section><TaskDay day={plus3}/></Section>
+                <Section><TaskDay day={plus4}/></Section>
+                <Section><TaskDay day={plus5}/></Section>
+                <Section><TaskUnplanned/></Section>
+                </ContentArea>
             </AppLayout>
         )
     }
 }
 
+
+
 export default UserView;
+
