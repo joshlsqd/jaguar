@@ -51,7 +51,14 @@ class TeamForm extends Component {
                                 
                                 
                                 if (ok) {
-                                    this.props.history.push('/');
+                                    // this.props.history.push('/');
+                                    this.setState({
+                                        teamtitle: "",
+                                        teamdescription: "",
+                                        // organization: "",
+                                        errors: {},
+                                        teamtitleerror: ""
+                                    })
                                 } else {
                                     const err = {};
                                     errors.forEach(({ path, message }) => {
