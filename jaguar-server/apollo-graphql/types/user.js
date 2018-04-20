@@ -52,8 +52,11 @@ const UserQuery =`
 
 const UserMutation = `
     updateUser(
+        _id: String 
         usertypeorg: String
         organization: String
+        profileImageUrl: String
+        username: String
     ) : User
     login(
         email: String!, 
