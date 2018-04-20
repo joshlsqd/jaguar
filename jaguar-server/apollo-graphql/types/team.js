@@ -1,7 +1,7 @@
 import User from "../../models/user";
-import UserTypeOrg from "../../models/usertypeteam";
 import {teamError} from "../formatErrors";
 import requiresAuth from '../permissions';
+import Organization from '../../models/organization';
 
 const TeamType = `
     type Team {
@@ -10,6 +10,7 @@ const TeamType = `
         teamdescription: String
         owner: User
         users: [User]
+        organization: Organization
     }
     
     type CreateTeamResponse {
@@ -29,6 +30,7 @@ const TeamMutation = `
         teamtitle: String!,
         teamdescription: String,
         owner: String,
+        organization: String,
     ) : CreateTeamResponse
 `;
 
@@ -52,34 +54,39 @@ const TeamNested = {
 };
 
 const TeamMutationResolver ={
-    createTeam: requiresAuth.createResolver(async (parent, {teamtitle, teamdescription, owner}, {Team}) => {
+    createTeam: async (parent, {teamtitle, teamdescription, owner, organization}, {Team}) => {
         try {
             const err = [];
             let teamtitleErr = await teamError(teamtitle);
+            console.log(teamtitleErr)
             if(teamtitleErr) { err.push(teamtitleErr)}
             if(!err.length) {
-                const teamanization = await Team.create({
-                    teamtitle,
-                    teamdescription,
-                    owner,
-                });
+            let team = await new Team({
+                teamtitle,
+                teamdescription,
+                owner,
+                organization
+            }).save();
+                let teamorganization = await Organization.findById(organization);
+                teamorganization.team.push(team._id);
+                await teamorganization.save();
                 return {
                     ok: true,
                     team,
                 };
             } else {
                 return {
-                    ok: false,
-                    errors: err,
+                ok: false,
+                errors: err,
                 }
-            }
+            };
         } catch (e) {
             return {
                 ok: false,
                 errors: [{path: 'teamtitle', message: 'something did not go well'}]
             }
         }
-    })
+    }
 };
 
 export {TeamType, TeamMutation, TeamQuery, TeamQueryResolver, TeamNested, TeamMutationResolver};

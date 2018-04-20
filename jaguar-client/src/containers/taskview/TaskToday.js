@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import { Query } from "react-apollo";
-import { List,Header, Segment, Dimmer, Loader} from 'semantic-ui-react';
+import { List,Header, Transition, Dimmer, Loader, Container} from 'semantic-ui-react';
 import moment from 'moment';
 import decode from 'jwt-decode';
 import {tasksToday} from "../apollo-graphql/taskQueries";
@@ -27,11 +27,15 @@ class TaskToday extends Component {
                         </div>);
                     if (error) return <p>Error :(</p>;
                     return <div>
-                        <Segment>
                             <Header>Today</Header>
-                            <List divided relaxed>
+                            <Transition.Group
+                                as={List}
+                                duration={200}
+                                divided
+                                relaxed
+                                size='large'
+                            >
                             {data.tasksToday.map(({_id, tasktitle}) => (
-
                                 <List.Item key={_id}>
                                     <TaskComplete
                                         _id={_id}
@@ -47,14 +51,13 @@ class TaskToday extends Component {
                                 </List.Item>
                             ))
                             }
-                            </List>
+                            </Transition.Group>
                             <TaskForm
                                 taskcurrentowner={user._id}
                                 plandate={today}
                                 updateQuery={tasksToday}
                                 variables={{taskcurrentowner: user._id, iscompleted: false, plandate: today}}
                             />
-                        </Segment>
                     </div>;
                 }
                 }

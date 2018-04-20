@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import { Mutation } from "react-apollo";
 import {Link} from 'react-router-dom';
 import { Form, Message, Button, Input, Container, Header } from 'semantic-ui-react';
+import Navbar from "../Navbar";
 import {addUser} from "../apollo-graphql/userQueries";
 
 
@@ -27,6 +28,8 @@ class SignUpForm extends Component {
             <Mutation mutation={addUser}>
             {(signup, {data, loading, error}) => {
             return (
+                <div>
+                <Navbar/>
                 <Container text style={{ marginTop: '7em' }}>
                     <Header as="h2">sign up</Header>
                         <Form onSubmit={async e => {
@@ -90,6 +93,7 @@ class SignUpForm extends Component {
                     ) : null}
                     <div><Link to='/login' >already have an account?</Link></div>
                 </Container>
+                </div>
             )
         }}
     </Mutation>

@@ -1,5 +1,6 @@
 import User from '../models/user';
 import Organization from '../models/organization';
+import Team from '../models/team';
 
 const verification = function validateEmail(v) {
     let re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
@@ -58,4 +59,17 @@ const orgError = async (org) => {
     }
 };
 
-export {emailError, passwordError, usernameError, orgError};
+const teamError = async (team) => {
+    let teams = await Team.findOne({ 'teamtitle': team});
+    if (!team.length) {
+        return { path: 'teamtitle', message: 'if this is blank why do you want to start a new organization?' }
+    }
+    if (teams) {
+        return { path: 'teamtitle', message: `that's interesting ${team} has already been created` }
+    }
+    if (team.length < 4) {
+        return { path: 'teamtitle', message: 'WLA! (we like acronyms) but we need a few more characters' }
+    }
+};
+
+export {emailError, passwordError, usernameError, orgError, teamError};
