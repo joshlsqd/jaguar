@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import { Query } from "react-apollo";
-import { List,Header, Transition, Dimmer, Loader, Container} from 'semantic-ui-react';
+import { List,Header, Transition, Dimmer, Loader} from 'semantic-ui-react';
 import moment from 'moment';
 import decode from 'jwt-decode';
 import {tasksToday} from "../apollo-graphql/taskQueries";
@@ -28,6 +28,12 @@ class TaskToday extends Component {
                     if (error) return <p>Error :(</p>;
                     return <div>
                             <Header>Today</Header>
+                        <TaskForm
+                            taskcurrentowner={user._id}
+                            plandate={today}
+                            updateQuery={tasksToday}
+                            variables={{taskcurrentowner: user._id, iscompleted: false, plandate: today}}
+                        />
                             <Transition.Group
                                 as={List}
                                 duration={200}
@@ -52,12 +58,6 @@ class TaskToday extends Component {
                             ))
                             }
                             </Transition.Group>
-                            <TaskForm
-                                taskcurrentowner={user._id}
-                                plandate={today}
-                                updateQuery={tasksToday}
-                                variables={{taskcurrentowner: user._id, iscompleted: false, plandate: today}}
-                            />
                     </div>;
                 }
                 }

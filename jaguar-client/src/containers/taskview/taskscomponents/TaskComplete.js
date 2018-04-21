@@ -12,7 +12,6 @@ class TaskComplete extends Component {
             })
         };
         return(
-
             <List.Icon
                 name='check circle'
                 size='large'
@@ -22,7 +21,6 @@ class TaskComplete extends Component {
                     paddingRight: '.5em',
                 }}
                 onClick={() => _complete()}
-
             />
 
         )

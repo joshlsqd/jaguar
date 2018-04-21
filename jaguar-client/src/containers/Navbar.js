@@ -30,6 +30,7 @@ const Navbar = () => {
                         <Dropdown.Item><Link to='/view'>tasks</Link></Dropdown.Item>
                         <Dropdown.Item><Link to='/view-users'>view users</Link></Dropdown.Item>
                         <Dropdown.Item><Link to='/update-user'>update user</Link></Dropdown.Item>
+
                         <Dropdown.Item><Link to='/' onClick={() => {
                             localStorage.removeItem('token');
                             client.cache.reset();

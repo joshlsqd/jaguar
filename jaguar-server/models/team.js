@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 import Organization from './organization';
 
+
 const teamSchema = new mongoose.Schema(
     {
         teamtitle: {

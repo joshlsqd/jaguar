@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 
 const NavSideWrapper = styled.div`
   grid-column: 1;
-  grid-row: 1 / 4;
+  grid-row: 1 / 5;
   background-color: #362234;
   color: #958993;
 `;

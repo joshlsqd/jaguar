@@ -1,6 +1,5 @@
 import User from "../../models/user";
 import {teamError} from "../formatErrors";
-import requiresAuth from '../permissions';
 import Organization from '../../models/organization';
 
 const TeamType = `
