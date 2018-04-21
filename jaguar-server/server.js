@@ -22,6 +22,7 @@ import Task from "./models/task";
 import UsertypeOrg from "./models/usertypeorg";
 import Milestone from "./models/milestone";
 import Organization from "./models/organization";
+import Team from "./models/team";
 
 import { refreshTokens } from './apollo-graphql/auth';
 const mongo_uri = `mongodb://JoshCook:password123@ds237669.mlab.com:37669/jaguar`;
@@ -74,7 +75,7 @@ app.use('*', cors({ origin: 'http://localhost:3000' }));
 app.use('/graphql', bodyParser.json(),
     graphqlExpress(req => ({ schema,
     context: {
-    User, Task, Time, PlannedTime, Organization, UsertypeOrg, Priority, Group, Milestone, Project, Requirement,
+    User, Task, Time, PlannedTime, Organization, UsertypeOrg, Priority, Group, Milestone, Project, Requirement, Team,
         user: req.user,
         SECRET,
         SECRET2,

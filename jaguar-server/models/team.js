@@ -1,4 +1,6 @@
 const mongoose = require("mongoose");
+import Organization from './organization';
+
 
 const teamSchema = new mongoose.Schema(
     {
@@ -33,6 +35,10 @@ const teamSchema = new mongoose.Schema(
             type: mongoose.Schema.Types.ObjectId,
             ref: "Project"
         }],
+        organization: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Organization"
+        },
         // client: [{
         //     type: mongoose.Schema.Types.ObjectId,
         //     ref: "Client"

@@ -1,5 +1,6 @@
 import User from "../../models/user";
 import UserTypeOrg from "../../models/usertypeorg";
+import Team from "../../models/team";
 import {orgError} from "../formatErrors";
 import requiresAuth from '../permissions';
 
@@ -11,6 +12,7 @@ const OrganizationType = `
         usertypes: [UserTypeOrg]
         owner: User
         users: [User]
+        team: [Team]
     }
     
     type CreateOrgResponse {

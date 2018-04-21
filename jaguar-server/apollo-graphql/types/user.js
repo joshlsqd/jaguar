@@ -54,6 +54,8 @@ const UserMutation = `
     updateUser(
         usertypeorg: String
         organization: String
+        profileImageUrl: String
+        username: String
     ) : User
     login(
         email: String!, 

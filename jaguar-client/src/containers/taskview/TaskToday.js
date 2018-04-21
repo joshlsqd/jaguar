@@ -58,7 +58,6 @@ class TaskToday extends Component {
                             ))
                             }
                             </Transition.Group>
-
                     </div>;
                 }
                 }
