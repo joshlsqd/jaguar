@@ -12,7 +12,7 @@ const OrganizationType = `
         usertypes: [UserTypeOrg]
         owner: User
         users: [User]
-        team: [Team]
+        teams: [Team]
     }
     
     type CreateOrgResponse {
@@ -49,8 +49,14 @@ const OrganizationQueryResolver = {
 };
 
 const OrganizationNested = {
-    users: async ({users}) => {
-        return (await User.find({users: _id}))
+    owner: async ({_id}) => {
+        return (await User.findById(_id))
+    },
+    users: async ({_id}) => {
+        return (await User.find({organization: _id}))
+    },
+    teams: async ({_id}) => {
+        return (await Team.find({organization: _id}))
     },
     usertypes: async ({usertypes}) => {
         return (await UserTypeOrg.find({usertypes: _id}))

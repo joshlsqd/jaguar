@@ -3,6 +3,8 @@ import Time from "../../models/time";
 import PlannedTime from "../../models/plannedtime";
 import Priority from "../../models/priority";
 import Group from "../../models/group";
+import Team from "../../models/team";
+import Organization from "../../models/organization";
 
 const TaskType = `
     type Task {
@@ -21,6 +23,7 @@ const TaskType = `
         duedate: String
         priority: Priority
         group: Group
+        team: Team
         organization: Organization
     }
 `;
@@ -31,6 +34,7 @@ const TaskQuery = `
     tasksByUser(taskcurrentowner: String, iscompleted: Boolean): [Task]
     tasksByDay(taskcurrentowner: String, iscompleted: Boolean, plandate: String): [Task]
     tasksToday(taskcurrentowner: String, iscompleted: Boolean, plandate: String): [Task]
+    tasksByTeam(taskcurrentowner: String, iscompleted: Boolean, team: String): [Task]
 `;
 
 const TaskMutation = `
@@ -71,6 +75,10 @@ const TaskQueryResolver = {
         const owner = await User.findById(args.taskcurrentowner.toString());
         return await Task.find({taskcurrentowner: owner, iscompleted: args.iscompleted, plandate: {$lte: new Date(args.plandate)}})
     },
+    tasksByTeam: async (parent, args, {Task}) => {
+        const teams = await Team.findById(args.team.toString());
+        return await Task.find({taskcurrentowner: null, iscompleted: args.iscompleted, team: teams})
+    },
 };
 
 const TaskNested = {
@@ -89,8 +97,11 @@ const TaskNested = {
     group: async ({_id}) => {
         return (await Group.find({task: _id}))
     },
+    team: async ({_id}) => {
+        return (await Team.find({task: _id}))
+    },
     organization: async ({_id}) => {
-        return (await PlannedTime.find({task: _id}))
+        return (await Organization.find({task: _id}))
     },
 };
 

@@ -13,6 +13,10 @@ const timeSchema = new mongoose.Schema(
           type: Date,
           required: true
         },
+        comment: {
+          type: String,
+          required: true
+        },
         user: {
             type: mongoose.Schema.Types.ObjectId,
             ref: "User"

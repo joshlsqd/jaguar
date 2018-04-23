@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const User = require("./user");
+const Team = require("./team");
 // const TaskType = require("./tasktype");
 // const Priority = require("./priority");
 
@@ -61,6 +62,10 @@ const taskSchema = new mongoose.Schema(
         group: {
             type: mongoose.Schema.Types.ObjectId,
             ref: "Group"
+        },
+        team: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Team"
         },
         organization: {
             type: mongoose.Schema.Types.ObjectId,

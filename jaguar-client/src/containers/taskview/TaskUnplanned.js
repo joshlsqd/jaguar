@@ -5,7 +5,7 @@ import decode from 'jwt-decode';
 import moment from 'moment';
 import {tasksByUser} from "../apollo-graphql/taskQueries";
 import TaskForm from './taskscomponents/TaskForm';
-import TaskComplete from './taskscomponents/TaskComplete';
+import TaskItem from './taskscomponents/TaskItem';
 
 const token = localStorage.getItem('token');
 
@@ -43,19 +43,16 @@ class TaskUnplanned extends Component {
                             style={{overflowY: 'auto', overflowX: 'hidden', minHeight: '300px', maxHeight: '325px'}}
                         >
                             {data.tasksByUser.map(({_id, tasktitle}) => (
-                                <List.Item key={_id}>
-                                    <TaskComplete
-                                        _id={_id}
-                                        completeddate={today}
-                                        updateQuery={tasksByUser}
-                                        variables={variables}
-                                    />
-                                    <List.Icon name='hourglass empty' size='large' verticalAlign='middle' />
-                                    <List.Content>
-                                        <List.Header as='a'>{tasktitle}</List.Header>
-                                        <List.Description as='a'>text tbd</List.Description>
-                                    </List.Content>
-                                </List.Item>
+                                <TaskItem
+                                    key={_id}
+                                    taskId={_id}
+                                    tasktitle={tasktitle}
+                                    completeddate={today}
+                                    updateQuery={tasksByUser}
+                                    variables={variables}
+                                    userId={user._id}
+                                    date={today}
+                                />
                             ))
                             }
                         </Transition.Group>

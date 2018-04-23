@@ -69,6 +69,21 @@ const tasksToday = gql`
 }
  `;
 
+const tasksByTeam = gql`
+ query tasksByTeam($iscompleted: Boolean, $team: String){
+  tasksByTeam(iscompleted: $iscompleted, team: $team) {
+    _id
+    tasktitle
+    iscompleted
+    plandate
+    taskcurrentowner {
+      _id
+      username
+    }
+  }
+}
+ `;
+
 const createTask = gql`
 mutation createTask($tasktitle: String, $taskcurrentowner: String, $plandate: String, $iscompleted: Boolean) {
     createTask(tasktitle: $tasktitle, taskcurrentowner: $taskcurrentowner, plandate: $plandate, iscompleted: $iscompleted) {
