@@ -1,4 +1,5 @@
 import User from "../../models/user";
+import Task from "../../models/task";
 import {teamError} from "../formatErrors";
 import Organization from '../../models/organization';
 
@@ -9,6 +10,7 @@ const TeamType = `
         teamdescription: String
         owner: User
         users: [User]
+        tasks: [Task]
         organization: Organization
     }
     
@@ -47,8 +49,14 @@ const TeamQueryResolver = {
 };
 
 const TeamNested = {
-    users: async ({users}) => {
-        return (await User.find({users: _id}))
+    tasks: async ({_id}) => {
+        return (await Task.find({team: _id}))
+    },
+    users: async ({_id}) => {
+        return (await User.find({team: _id}))
+    },
+    organization: async ({organization}) => {
+        return (await Organization.findById(organization))
     },
 };
 
@@ -78,7 +86,7 @@ const TeamMutationResolver ={
                 ok: false,
                 errors: err,
                 }
-            };
+            }
         } catch (e) {
             return {
                 ok: false,

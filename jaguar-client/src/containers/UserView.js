@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import TaskToday from './taskview/TaskToday'
 import TaskDay from './taskview/TaskDay'
 import TaskUnplanned from './taskview/TaskUnplanned'
+import TaskTeam from './taskview/TaskTeam'
 import moment from 'moment';
 import AppLayout from './layout/AppLayout'
 import NavSidebar from './layout/NavSidebar'
@@ -30,6 +31,7 @@ class UserView extends Component {
                 <Section><TaskDay day={plus4}/></Section>
                 <Section><TaskDay day={plus5}/></Section>
                 <Section><TaskUnplanned/></Section>
+                <Section><TaskTeam/></Section>
                 </ContentArea>
             </AppLayout>
         )

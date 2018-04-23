@@ -1,44 +1,55 @@
 import React, {Component} from 'react';
 import { graphql } from "react-apollo";
-import {AddTimeTask} from '../../apollo-graphql/taskQueries';
-import { List, Transition, Accordion } from 'semantic-ui-react';
+import {createTaskTime} from '../../apollo-graphql/timeQueries';
+import { Form, Input } from 'semantic-ui-react';
 
-class TaskComplete extends Component {
+class TaskTime extends Component {
+    state = {
+        time: '',
+        comment: '',
+    };
+
     render() {
-        const _complete = async () => {
-            await this.props.complete({
-                variables: {_id: this.props._id, iscompleted: true, completeddate: this.props.completeddate},
-                refetchQueries: [{ query: this.props.updateQuery, variables: this.props.variables}]
+        const {taskId, userId, date,} = this.props;
+        const { time, comment } = this.state;
+        const _addTime = async () => {
+            await this.props.addTime({
+                variables: {task: taskId, user: userId, date:date, time, comment}
             })
         };
         return(
-            <Transition animation='tada' duration={200} visible={true}>
-                <List.Icon
-                    name='check circle'
-                    size='large'
-                    verticalAlign='middle'
-                    style={{
-                        paddingRight: '.5em',
-                    }}
-                    onClick={() => _complete()}
-                />
-            </Transition>
-            <Accordion>
-            <Accordion.Title active={activeIndex === 0} index={0} onClick={this.handleClick}>
-
-    </Accordion.Title>
-        <Accordion.Content active={activeIndex === 0}>
-            <p>
-                A dog is a type of domesticated animal. Known for its loyalty and faithfulness, it can be found as a
-                {' '}welcome guest in many households across the world.
-            </p>
-            </Accordion.Content>
+            <Form
+                  onSubmit={async e => {
+                e.preventDefault();
+                await _addTime();
+                this.setState({time: '', comment: '',});
+            }}>
+                <Form.Group style={{marginBottom: '0', paddingBottom: '0'}} inline>
+                <Form.Field width='six'>
+                    <Input
+                        value={time}
+                        type='number'
+                        placeholder='time'
+                        onChange={e => this.setState({time: e.target.value})}
+                    />
+                </Form.Field>
+                <Form.Field width='twelve'>
+                    <Input
+                        value={comment}
+                        type='text'
+                        placeholder='comment'
+                        action={{icon: 'add circle'}}
+                        onChange={e => this.setState({comment: e.target.value})}
+                    />
+                </Form.Field>
+                </Form.Group>
+            </Form>
         )
     }
 }
 
 
 
-export default graphql(completeTask,{
-    name: 'complete',
-})(TaskComplete);
+export default graphql(createTaskTime,{
+    name: 'addTime',
+})(TaskTime);

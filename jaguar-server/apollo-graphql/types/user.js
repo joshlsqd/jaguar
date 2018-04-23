@@ -3,6 +3,7 @@ import Task from '../../models/task';
 import PlannedTime from '../../models/plannedtime';
 import UserTypeOrg from '../../models/usertypeorg';
 import Organization from '../../models/organization';
+import Team from '../../models/team';
 require("dotenv").load();
 import bcrypt from 'bcrypt';
 import { tryLogin, refreshLogin } from '../auth';
@@ -20,6 +21,7 @@ const UserType = `
         time: [Time]
         plannedtime: [PlannedTime]
         usertypeorg: [UserTypeOrg]
+        team: [Team]
         organization: [Organization]
         jwt: String
     }
@@ -103,6 +105,9 @@ const UserNested =  {
     },
     organization: async ({_id}) => {
         return (await Organization.find({user: _id}))
+    },
+    team: async ({_id}) => {
+        return (await Team.find({team: _id}))
     }
 };
 
